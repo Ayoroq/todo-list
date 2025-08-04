@@ -4,14 +4,20 @@ const taskList = [];
 
 // class to create a task
 class Task {
-  constructor(taskName, taskDescription, taskDueDate, taskPriority) {
+  constructor(
+    taskName,
+    taskDescription,
+    taskDueDate,
+    taskPriority,
+    taskStatus = false
+  ) {
     this.taskName = taskName;
     this.taskDescription = taskDescription;
     this.creationDate = new Date();
     this.taskDueDate = taskDueDate;
     this.taskPriority = taskPriority;
     this.id = crypto.randomUUID();
-    this.completed = false;
+    this.taskStatus = taskStatus;
 
     addTaskToList(this);
     addTaskToLocalStorage(this);
@@ -21,14 +27,17 @@ class Task {
     deleteTask(this);
   }
 
-  complete() {
-    this.completed = true;
-  }
-  uncomplete() {
-    this.completed = false;
+  edit(newName, newDescription, newDueDate, newPriority, newStatus) {
+    this.taskName = newName || this.taskName;
+    this.taskDescription = newDescription || this.taskDescription;
+    this.taskDueDate = newDueDate || this.taskDueDate;
+    this.taskPriority = newPriority || this.taskPriority;
+    this.taskStatus = newStatus || this.taskStatus;
+    addTaskToLocalStorage(this); // Update localStorage
   }
 }
 
+// Helper functions for the task class
 //add task to the task list
 function addTaskToList(task) {
   taskList.push(task);
@@ -39,10 +48,22 @@ function addTaskToLocalStorage(task) {
   localStorage.setItem(task.id, JSON.stringify(task));
 }
 
-
 function deleteTask(task) {
   taskList.splice(taskList.indexOf(task), 1);
   localStorage.removeItem(task.id);
+}
+
+// Find functions
+function findTaskById(id) {
+  return taskList.find((task) => task.id === id);
+}
+
+// Filter functions
+function getCompletedTasks() {
+  return taskList.filter((task) => task.taskStatus);
+}
+function getPendingTasks() {
+  return taskList.filter((task) => !task.taskStatus);
 }
 
 // project management class
@@ -52,7 +73,7 @@ class Project {
     this.tasks = [];
     this.id = crypto.randomUUID();
     this.creationDate = new Date();
-    
+
     // Automatically add to project list and localStorage
     addProjectToList(this);
     addProjectToLocalStorage(this);
@@ -73,6 +94,11 @@ class Project {
     removeProjectFromList(this);
     removeProjectFromLocalStorage(this);
   }
+
+  edit(newName) {
+    this.projectName = newName || this.projectName;
+    addProjectToLocalStorage(this); // Update localStorage
+  }
 }
 
 // Helper functions for project management
@@ -91,3 +117,18 @@ function addProjectToLocalStorage(project) {
 function removeProjectFromLocalStorage(project) {
   localStorage.removeItem(project.id);
 }
+
+function findProjectById(id) {
+  return projectList.find((project) => project.id === id);
+}
+
+export {
+  Task,
+  Project,
+  taskList,
+  projectList,
+  findTaskById,
+  findProjectById,
+  getCompletedTasks,
+  getPendingTasks,
+};
