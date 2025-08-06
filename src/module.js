@@ -1,4 +1,3 @@
-const crypto = require("crypto");
 const projectList = [];
 const taskList = [];
 
@@ -68,8 +67,9 @@ function getPendingTasks() {
 
 // project management class
 class Project {
-  constructor(projectName) {
+  constructor(projectName, projectDescription = "") {
     this.projectName = projectName;
+    this.projectDescription = projectDescription;
     this.tasks = [];
     this.id = crypto.randomUUID();
     this.creationDate = new Date();
@@ -121,6 +121,21 @@ function removeProjectFromLocalStorage(project) {
 function findProjectById(id) {
   return projectList.find((project) => project.id === id);
 }
+
+
+// function loadFromLocalStorage() {
+//   // Load tasks
+//   for (let i = 0; i < localStorage.length; i++) {
+//     const key = localStorage.key(i);
+//     const item = JSON.parse(localStorage.getItem(key));
+    
+//     if (item.taskName) { // It's a task
+//       taskList.push(item);
+//     } else if (item.projectName) { // It's a project
+//       projectList.push(item);
+//     }
+//   }
+// }
 
 export {
   Task,
