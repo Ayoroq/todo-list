@@ -1,7 +1,11 @@
-body{
+/* ===== CSS VARIABLES ===== */
+body {
     height: 100vh;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    color: #333;
     
-    /* Colour Variables */
+    /* Base Colors */
     --color-primary: #2563eb;
     --color-primary-dark: #1d4ed8;
     --color-text-primary: #111827;
@@ -10,86 +14,82 @@ body{
     --color-background: #f3f4f6;
     --color-white: #ffffff;
     
-    /* Priority Colours */
+    /* Priority Colors */
     --color-priority-high: #dc2626;
     --color-priority-medium: #d97706;
     --color-priority-low: #16a34a;
 }
 
-.content{
+/* ===== LAYOUT ===== */
+.content {
     max-width: 1000px;
     margin: 2rem auto;
     display: grid;
     grid-template-columns: 1fr 5fr;
     grid-template-rows: 1fr 5fr;
     grid-template-areas: 
-    "header header"
-    "side-bar main-content";
+        "header header"
+        "side-bar main-content";
     height: 100%;
 }
 
-.header{
+.header {
     display: flex;
     align-items: center;
     justify-content: space-between;
     grid-area: header;
 }
 
-.search{
+.search {
     width: 50vw;
     height: 5vh;
 }
 
-.side-bar{
+.side-bar {
     display: flex;
     flex-direction: column;
     grid-area: side-bar;
 }
 
-.task-container,.project-container{
-    display: flex;
-    flex-direction: column;
-}
-
-.task-filter,.project-filter{
-    display: flex;
-    flex-direction: column;
-    align-items:start;
-}
-
-.main{
+.main {
     grid-area: main-content;
 }
 
-/* Task Container*/
-.task-container{
+/* ===== SIDEBAR COMPONENTS ===== */
+.task-container,
+.project-container {
     display: flex;
     flex-direction: column;
 }
 
-.main-task,.main-project{
+.main-task,
+.main-project {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.task-filter{
+.task-filter,
+.project-filter {
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
     gap: 1rem;
 }
 
-.task-filter button,.project-filter button{
+.task-filter button,
+.project-filter button {
     border: none;
     background: none;
     cursor: pointer;
 }
 
-.add-task,.add-project{
-    font-size:x-large;
+.add-task,
+.add-project {
+    font-size: x-large;
 }
 
-/* Task Card Styles */
+/* ===== TASK CARDS ===== */
 .task-card {
     margin-bottom: 1rem;
     padding: 1rem;
@@ -122,7 +122,8 @@ body{
     gap: 0.5rem;
 }
 
-.edit-btn, .delete-btn {
+.edit-btn,
+.delete-btn {
     background: none;
     border: none;
     cursor: pointer;
@@ -131,7 +132,8 @@ body{
     font-size: 1rem;
 }
 
-.edit-btn:hover, .delete-btn:hover {
+.edit-btn:hover,
+.delete-btn:hover {
     background: var(--color-background);
 }
 
@@ -176,11 +178,11 @@ body{
     font-size: 0.875rem;
 }
 
-
-.visually-hidden{
+/* ===== UTILITY CLASSES ===== */
+.visually-hidden {
     display: none;
 }
 
-.hidden{
+.hidden {
     display: none;
 }
