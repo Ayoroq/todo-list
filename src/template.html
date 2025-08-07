@@ -7,8 +7,51 @@
   </head>
   <body>
     <div id="content">
-      <header></header>
-      <main id="main-content"></main>
+      <header class="header" role="banner">
+        <div class="logo">
+          <h1>📝 Todo App</h1>
+        </div>
+        <div class="search-container">
+          <label for="search-input" class="visually-hidden">Search tasks</label>
+          <input
+            type="search"
+            id="search-input"
+            name="search"
+            placeholder="Search tasks..."
+            class="search"
+            aria-label="Search tasks"
+            autocomplete="off"
+          />
+        </div>
+      </header>
+      <section class="side-bar">
+        <div class="task">
+          <div class="task-container">
+            <div class="main-task">
+              <p>Task</p>
+              <p>+</p>
+            </div>
+            <div class="task-filter">
+              <button>All</button>
+              <button>Today</button>
+              <button>Upcoming</button>
+              <button>Completed</button>
+            </div>
+          </div>
+        </div>
+        <div class="project">
+          <div class="project-container">
+            <div class="main-project">
+              <p>Projects</p>
+              <p>+</p>
+            </div>
+            <div class="project-filter">
+              <button>All</button>
+            </div>
+          </div>
+        </div>
+      </section>
+      <main id="main" class="main"></main>
     </div>
   </body>
 </html>
