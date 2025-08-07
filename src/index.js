@@ -10,6 +10,7 @@ import {
   getCompletedTasks,
   getPendingTasks,
 } from "./module.js";
+import { addTaskDialog } from "./dialog.js";
 
 import { emptyData, defaultData } from "./content.js";
 
@@ -80,3 +81,5 @@ if (taskList.length === 0) {
 } else {
   defaultData();
 }
+
+addTaskDialog();
