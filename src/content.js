@@ -14,21 +14,31 @@ function emptyData() {
 }
 
 function defaultData() {
-  const tasks = document.createElement("div");
-  tasks.classList.add("tasks");
+  const tasksContainer = document.createElement("div");
+  tasksContainer.classList.add("task-container");
   taskList.forEach((element) => {
     const task = document.createElement("div");
-    task.classList.add("task");
+    task.classList.add("task-card");
     task.innerHTML = `
-    <div class="task-name">${element.taskName}</div>
-    <div class="task-description">${element.taskDescription}</div>
-    <div class="task-due-date">${element.taskDueDate}</div>
-    <div class="task-priority">${element.taskPriority}</div>
-    <div class="task-status">${element.taskStatus}</div>
+        <div class="task-header">
+          <input type="checkbox" class="task-checkbox">
+          <h3 class="task-name">${element.taskName}</h3>
+          <div class="task-actions">
+            <button class="edit-btn">✏️</button>
+            <button class="delete-btn">🗑️</button>
+          </div>
+        </div>
+        <div class="task-body">
+          <p class="task-description hidden">${element.taskDescription}</p>
+          <div class="task-meta">
+            <span class="task-priority priority-${element.taskPriority.toLowerCase()}">${element.taskPriority}</span>
+            <span class="task-due-date">${element.taskDueDate}</span>
+          </div>
+        </div>
     `;
-    tasks.appendChild(task);
+    tasksContainer.appendChild(task);
   });
-  main.appendChild(tasks);
+  main.appendChild(tasksContainer);
 }
 
 export { emptyData, defaultData}
