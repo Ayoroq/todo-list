@@ -10,6 +10,9 @@ import {
   getCompletedTasks,
   getPendingTasks,
 } from "./module.js";
+
+import { emptyData, defaultData } from "./content.js";
+
 localStorage.clear();
 
 const exampleTask = new Task(
@@ -28,3 +31,9 @@ const exampleProject = new Project(
 exampleProject.addTaskToProject(exampleTask);
 console.log(exampleProject.tasks);
 console.log(exampleProject);
+
+if (taskList.length === 0) {
+  emptyData();
+} else {
+  defaultData();
+}
