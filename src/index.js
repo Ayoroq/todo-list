@@ -82,9 +82,23 @@ if (taskList.length === 0) {
   defaultData();
 }
 
-//event listener for when the add task or add button is clicked
-const addTaskBtn = document.querySelector(".add-task");
-const addProjectBtn = document.querySelector(".add-project");
-
-addTaskBtn.addEventListener("click", addTaskDialog);
-addProjectBtn.addEventListener("click", addProjectDialog);
+// Event delegation for dynamically created elements
+document.addEventListener("click", (event) => {
+  // This handles the add task button clicks
+  if (event.target.matches(".add-task")) {
+    addTaskDialog();
+  }
+  
+  // This handles the project button clicks
+  if (event.target.matches(".add-project")) {
+    addProjectDialog();
+  }
+  
+  // This handles the button clicks in dialogs
+  if (event.target.matches(".close")) {
+    const dialog = event.target.closest("dialog");
+    if (dialog) {
+      dialog.close();
+    }
+  }
+});

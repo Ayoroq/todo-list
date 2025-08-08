@@ -2,6 +2,7 @@ const body = document.querySelector("body");
 function addTaskDialog() {
   const dialog = document.createElement("dialog");
   dialog.classList.add("add-task-dialog");
+  dialog.setAttribute("closedby", "closerequest");
   dialog.innerHTML = `
     <form action="" class="task-form" method="dialog">
     <h2>Add New Task</h2>
@@ -48,7 +49,7 @@ function addTaskDialog() {
         </select>
     </p>
     <div class="dialog-buttons">
-        <button type="button">Cancel</button>
+        <button type="button" class="close">Cancel</button>
         <button type="submit">Save</button>
     </div>
     </form>`;
@@ -60,6 +61,7 @@ function addTaskDialog() {
 function addProjectDialog() {
     const dialog = document.createElement("dialog");
     dialog.classList.add("add-project-dialog");
+    dialog.setAttribute("closedby", "closerequest");
     dialog.innerHTML = `
     <form action="" class="project-form" method="dialog">
     <h2>Add New Project</h2>
@@ -84,7 +86,7 @@ function addProjectDialog() {
         ></textarea>
     </p>
     <div class="dialog-buttons">
-        <button type="button">Cancel</button>
+        <button type="button" class="close">Cancel</button>
         <button type="submit">Save</button>
     </div>
     </form>`;
