@@ -22,10 +22,6 @@ class Task {
     addTaskToLocalStorage(this);
   }
 
-  delete() {
-    deleteTask(this);
-  }
-
   edit(newName, newDescription, newDueDate, newPriority, newStatus) {
     this.taskName = newName || this.taskName;
     this.taskDescription = newDescription || this.taskDescription;
@@ -146,4 +142,5 @@ export {
   getCompletedTasks,
   getPendingTasks,
   loadFromLocalStorage,
+  deleteTask,
 };

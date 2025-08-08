@@ -1,4 +1,4 @@
-import { Task, Project, taskList, projectList } from "./module.js";
+import { Task, Project, taskList, projectList,findTaskById,deleteTask } from "./module.js";
 import { addTaskDialog, addProjectDialog } from "./dialog.js";
 import { renderTasks, renderProjects } from "./render.js";
 
@@ -69,6 +69,18 @@ function initializeEventListeners() {
         }
       }
     }
+
+    //handle delete task button clicks
+    if (event.target.matches(".delete-btn")) {
+      const taskCard = event.target.closest(".task-card");
+      const taskId = taskCard.dataset.taskId;
+      const task = findTaskById(taskId);
+      if (task) {
+        deleteTask(task);
+        renderTasks();
+      }
+    }
+
   });
 }
 
