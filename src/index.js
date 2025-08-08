@@ -82,5 +82,9 @@ if (taskList.length === 0) {
   defaultData();
 }
 
-addTaskDialog();
-addProjectDialog();
+//event listener for when the add task or add button is clicked
+const addTaskBtn = document.querySelector(".add-task");
+const addProjectBtn = document.querySelector(".add-project");
+
+addTaskBtn.addEventListener("click", addTaskDialog);
+addProjectBtn.addEventListener("click", addProjectDialog);
