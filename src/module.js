@@ -123,19 +123,18 @@ function findProjectById(id) {
 }
 
 
-// function loadFromLocalStorage() {
-//   // Load tasks
-//   for (let i = 0; i < localStorage.length; i++) {
-//     const key = localStorage.key(i);
-//     const item = JSON.parse(localStorage.getItem(key));
+function loadFromLocalStorage() {
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    const item = JSON.parse(localStorage.getItem(key));
     
-//     if (item.taskName) { // It's a task
-//       taskList.push(item);
-//     } else if (item.projectName) { // It's a project
-//       projectList.push(item);
-//     }
-//   }
-// }
+    if (item.taskName) { // It's a task
+      taskList.push(item);
+    } else if (item.projectName) { // It's a project
+      projectList.push(item);
+    }
+  }
+}
 
 export {
   Task,
@@ -146,4 +145,5 @@ export {
   findProjectById,
   getCompletedTasks,
   getPendingTasks,
+  loadFromLocalStorage,
 };

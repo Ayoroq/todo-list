@@ -9,72 +9,15 @@ import {
   findProjectById,
   getCompletedTasks,
   getPendingTasks,
+  loadFromLocalStorage,
 } from "./module.js";
 
+
 import { emptyData, defaultData } from "./content.js";
-import { addTaskDialog, addProjectDialog } from "./dialog.js";
+import { initializeEventListeners } from "./events.js";
 
-localStorage.clear();
+loadFromLocalStorage();
 
-// Sample tasks for testing
-const task1 = new Task(
-  "Buy groceries",
-  "Milk, eggs, and bread",
-  "2025-08-10",
-  "High",
-  false
-);
-
-const task2 = new Task(
-  "Complete project proposal",
-  "Write the final draft and send to client for review",
-  "2025-01-15",
-  "High",
-  false
-);
-
-const task3 = new Task(
-  "Schedule dentist appointment",
-  "Call Dr. Smith's office to book cleaning appointment",
-  "2025-01-20",
-  "Medium",
-  false
-);
-
-const task4 = new Task(
-  "Read new book",
-  "Finish reading 'The Pragmatic Programmer'",
-  "2025-02-01",
-  "Low",
-  false
-);
-
-const task5 = new Task(
-  "Update resume",
-  "Add recent projects and skills to LinkedIn profile",
-  "2025-01-25",
-  "Medium",
-  false
-);
-
-const task6 = new Task(
-  "Plan weekend trip",
-  "Research hotels and activities for San Francisco trip",
-  "2025-01-30",
-  "Low",
-  true
-);
-
-const exampleProject = new Project(
-  "Weekly Errands",
-  "Tasks for weekly shopping and chores"
-);
-
-exampleProject.addTaskToProject(task1);
-exampleProject.addTaskToProject(task2);
-console.log('Project tasks:', exampleProject.tasks);
-console.log('All tasks:', taskList);
-console.log('All projects:', projectList);
 
 if (taskList.length === 0) {
   emptyData();
@@ -82,23 +25,5 @@ if (taskList.length === 0) {
   defaultData();
 }
 
-// Event delegation for dynamically created elements
-document.addEventListener("click", (event) => {
-  // This handles the add task button clicks
-  if (event.target.matches(".add-task")) {
-    addTaskDialog();
-  }
-  
-  // This handles the project button clicks
-  if (event.target.matches(".add-project")) {
-    addProjectDialog();
-  }
-  
-  // This handles the button clicks in dialogs
-  if (event.target.matches(".close")) {
-    const dialog = event.target.closest("dialog");
-    if (dialog) {
-      dialog.close();
-    }
-  }
-});
+// Initialize event listeners
+initializeEventListeners();

@@ -50,7 +50,7 @@ function addTaskDialog() {
     </p>
     <div class="dialog-buttons">
         <button type="button" class="close">Cancel</button>
-        <button type="submit">Save</button>
+        <button type="submit" class="save-task">Save</button>
     </div>
     </form>`;
 
@@ -87,7 +87,7 @@ function addProjectDialog() {
     </p>
     <div class="dialog-buttons">
         <button type="button" class="close">Cancel</button>
-        <button type="submit">Save</button>
+        <button type="submit" class="save-project">Save</button>
     </div>
     </form>`;
 
