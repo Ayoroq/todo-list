@@ -12,18 +12,13 @@ import {
   loadFromLocalStorage,
 } from "./module.js";
 
-
-import { emptyData, defaultData } from "./content.js";
 import { initializeEventListeners } from "./events.js";
+import { renderAll } from "./render.js";
 
 loadFromLocalStorage();
 
-
-if (taskList.length === 0) {
-  emptyData();
-} else {
-  defaultData();
-}
+// Render initial content
+renderAll();
 
 // Initialize event listeners
 initializeEventListeners();

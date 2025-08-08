@@ -1,5 +1,6 @@
 import { Task, Project, taskList, projectList } from "./module.js";
 import { addTaskDialog, addProjectDialog } from "./dialog.js";
+import { renderTasks, renderProjects } from "./render.js";
 
 function initializeEventListeners() {
   // Event delegation for dynamically created elements
@@ -42,6 +43,9 @@ function initializeEventListeners() {
             taskPriority,
             taskStatus
           );
+          
+          // Re-render tasks to show the new task
+          renderTasks();
           dialog.close();
         }
       }
@@ -58,6 +62,9 @@ function initializeEventListeners() {
           const projectDescription = formData.get("project-description");
           
           const project = new Project(projectName, projectDescription);
+          
+          // Re-render projects to show the new project
+          renderProjects();
           dialog.close();
         }
       }
