@@ -10,9 +10,9 @@ import {
   getCompletedTasks,
   getPendingTasks,
 } from "./module.js";
-import { addTaskDialog } from "./dialog.js";
 
 import { emptyData, defaultData } from "./content.js";
+import { addTaskDialog, addProjectDialog } from "./dialog.js";
 
 localStorage.clear();
 
@@ -83,3 +83,4 @@ if (taskList.length === 0) {
 }
 
 addTaskDialog();
+addProjectDialog();

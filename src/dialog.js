@@ -1,8 +1,8 @@
+const body = document.querySelector("body");
 function addTaskDialog() {
-    const body = document.querySelector('body');
-    const dialog = document.createElement('dialog');
-    dialog.classList.add('add-task-dialog');
-    dialog.innerHTML = `
+  const dialog = document.createElement("dialog");
+  dialog.classList.add("add-task-dialog");
+  dialog.innerHTML = `
     <form action="" class="task-form" method="dialog">
     <h2>Add New Task</h2>
     <p>
@@ -53,8 +53,44 @@ function addTaskDialog() {
     </div>
     </form>`;
 
+  body.appendChild(dialog);
+  dialog.showModal();
+}
+
+function addProjectDialog() {
+    const dialog = document.createElement("dialog");
+    dialog.classList.add("add-project-dialog");
+    dialog.innerHTML = `
+    <form action="" class="project-form" method="dialog">
+    <h2>Add New Project</h2>
+    <p>
+        <label for="project-name" class="visually-hidden">Project Name</label>
+        <input
+        type="text"
+        name="project-name"
+        class="project-name"
+        placeholder="Project Name"
+        id="project-name"
+        required
+        />
+    </p>
+    <p>
+        <label for="project-description" class="visually-hidden">Project Description</label>
+        <textarea
+        name="project-description"
+        class="project-description"
+        placeholder="Project Description"
+        id="project-description"
+        ></textarea>
+    </p>
+    <div class="dialog-buttons">
+        <button type="button">Cancel</button>
+        <button type="submit">Save</button>
+    </div>
+    </form>`;
+
     body.appendChild(dialog);
     dialog.showModal();
 }
 
-export { addTaskDialog };
+export { addTaskDialog,addProjectDialog };
