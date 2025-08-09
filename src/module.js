@@ -21,15 +21,6 @@ class Task {
     addTaskToList(this);
     addTaskToLocalStorage(this);
   }
-
-  edit(newName, newDescription, newDueDate, newPriority, newStatus) {
-    this.taskName = newName || this.taskName;
-    this.taskDescription = newDescription || this.taskDescription;
-    this.taskDueDate = newDueDate || this.taskDueDate;
-    this.taskPriority = newPriority || this.taskPriority;
-    this.taskStatus = newStatus || this.taskStatus;
-    addTaskToLocalStorage(this); // Update localStorage
-  }
 }
 
 // Helper functions for the task class
@@ -46,6 +37,15 @@ function addTaskToLocalStorage(task) {
 function deleteTask(task) {
   taskList.splice(taskList.indexOf(task), 1);
   localStorage.removeItem(task.id);
+}
+
+function editTask(task,newName, newDescription, newDueDate, newPriority, newStatus) {
+  task.taskName = newName;
+  task.taskDescription = newDescription;
+  task.taskDueDate = newDueDate;
+  task.taskPriority = newPriority;
+  task.taskStatus = newStatus;
+  addTaskToLocalStorage(task); // Update localStorage
 }
 
 // Find functions
@@ -118,15 +118,16 @@ function findProjectById(id) {
   return projectList.find((project) => project.id === id);
 }
 
-
 function loadFromLocalStorage() {
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i);
     const item = JSON.parse(localStorage.getItem(key));
-    
-    if (item.taskName) { // It's a task
+
+    if (item.taskName) {
+      // It's a task
       taskList.push(item);
-    } else if (item.projectName) { // It's a project
+    } else if (item.projectName) {
+      // It's a project
       projectList.push(item);
     }
   }
@@ -143,4 +144,5 @@ export {
   getPendingTasks,
   loadFromLocalStorage,
   deleteTask,
+  editTask,
 };

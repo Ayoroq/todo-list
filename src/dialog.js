@@ -58,14 +58,65 @@ function addTaskDialog() {
   dialog.showModal();
 }
 
-function editTask(task){
-    addTaskDialog();
-    const form = document.querySelector(".task-form");
-    form.querySelector(".task-name").value = task.taskName;
-    form.querySelector(".task-description").value = task.taskDescription;
-    form.querySelector(".task-priority").value = task.taskPriority;
-    form.querySelector(".task-due-date").value = task.taskDueDate;
-    form.querySelector(".task-project").value = task.taskProject;
+function editTaskDialog(task) {
+  const dialog = document.createElement("dialog");
+  dialog.classList.add("edit-task-dialog");
+  dialog.setAttribute("closedby", "closerequest");
+  dialog.innerHTML = `
+    <form action="" class="edit-task-form" method="dialog">
+    <h2>Edit Task</h2>
+    <p>
+        <label for="edit-task-name" class="visually-hidden">Task Name</label>
+        <input
+        type="text"
+        name="task-name"
+        class="task-name"
+        placeholder="Task Name"
+        id="edit-task-name"
+        value="${task.taskName}"
+        required
+        />
+    </p>
+    <p>
+        <label for="edit-task-description" class="visually-hidden">Task Description</label>
+        <textarea
+        name="task-description"
+        class="task-description"
+        placeholder="Task Description"
+        id="edit-task-description"
+        >${task.taskDescription}</textarea>
+    </p>
+    <p>
+        <label for="edit-task-priority">Choose a priority</label>
+        <select
+        name="task-priority"
+        class="task-priority"
+        id="edit-task-priority"
+        >
+        <option value="high" ${task.taskPriority === 'high' ? 'selected' : ''}>High</option>
+        <option value="medium" ${task.taskPriority === 'medium' ? 'selected' : ''}>Medium</option>
+        <option value="low" ${task.taskPriority === 'low' ? 'selected' : ''}>Low</option>
+        </select>
+    </p>
+    <p>
+        <label for="edit-task-due-date">Task Due date</label>
+        <input type="datetime-local" name="task-due-date" class="task-due-date" id="edit-task-due-date" value="${task.taskDueDate}">
+    </p>
+    <p>
+        <label for="edit-task-project">Add to Project</label>
+        <select name="task-project" class="task-project" id="edit-task-project">
+        <option value="">No Project</option>
+        </select>
+    </p>
+    <input type="hidden" name="task-id" value="${task.id}">
+    <div class="dialog-buttons">
+        <button type="button" class="close">Cancel</button>
+        <button type="submit" class="save-edit-task">Update</button>
+    </div>
+    </form>`;
+
+  body.appendChild(dialog);
+  dialog.showModal();
 }   
 
 function addProjectDialog() {
@@ -105,4 +156,4 @@ function addProjectDialog() {
     dialog.showModal();
 }
 
-export { addTaskDialog,addProjectDialog,editTask };
+export { addTaskDialog,addProjectDialog,editTaskDialog };
