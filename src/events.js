@@ -20,6 +20,7 @@ function initializeEventListeners() {
       const dialog = event.target.closest("dialog");
       if (dialog) {
         dialog.close();
+        dialog.remove();
       }
     }
 
@@ -47,6 +48,7 @@ function initializeEventListeners() {
           // Re-render tasks to show the new task
           renderTasks();
           dialog.close();
+          dialog.remove();
         }
       }
     }
@@ -89,8 +91,7 @@ function initializeEventListeners() {
       const taskId = taskCard.dataset.taskId;
       const task = findTaskById(taskId);
       if (task) {
-        editTask(task);
-        renderTasks();
+       //
       }
     }
   });
