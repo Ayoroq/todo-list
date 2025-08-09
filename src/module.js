@@ -39,7 +39,7 @@ function deleteTask(task) {
   localStorage.removeItem(task.id);
 }
 
-function editTask(task,newName, newDescription, newDueDate, newPriority, newStatus) {
+function editTask(task,newName, newDescription, newDueDate, newPriority, newStatus = task.taskStatus) {
   task.taskName = newName;
   task.taskDescription = newDescription;
   task.taskDueDate = newDueDate;

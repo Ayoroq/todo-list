@@ -40,7 +40,6 @@ function createTaskCard(task) {
           </div>
         </div>
   `;
-  
   return taskCard;
 }
 

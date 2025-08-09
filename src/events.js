@@ -43,14 +43,12 @@ function initializeEventListeners() {
           const taskDescription = formData.get("task-description");
           const taskDueDate = formData.get("task-due-date");
           const taskPriority = formData.get("task-priority");
-          const taskStatus = formData.get("task-status");
 
           const task = new Task(
             taskName,
             taskDescription,
             taskDueDate,
             taskPriority,
-            taskStatus
           );
 
           // Re-render tasks to show the new task
@@ -116,13 +114,12 @@ function initializeEventListeners() {
           const newDescription = formData.get("task-description");
           const newDueDate = formData.get("task-due-date");
           const newPriority = formData.get("task-priority");
-          const newStatus = formData.get("task-status");
           const taskId = formData.get("task-id");
 
 
           const task = findTaskById(taskId);
           if (task) {
-            editTask(task, newName, newDescription, newDueDate, newPriority, newStatus);
+            editTask(task, newName, newDescription, newDueDate, newPriority);
             renderTasks();
             dialog.close();
             dialog.remove();
@@ -131,6 +128,23 @@ function initializeEventListeners() {
       }
     }
   });
+
+  //handling when an item is marked as completed
+  document.addEventListener("change", (event) => {
+    if (event.target.matches(".task-checkbox")){
+      const checkbox = event.target;
+      checkbox.toggleAttribute("checked");
+      const taskCard = event.target.closest(".task-card");
+      const taskId = taskCard.dataset.taskId;
+      const task = findTaskById(taskId);
+      if (task) {
+        console.log(task);
+        const newStatus = !task.taskStatus;
+        editTask(task, task.taskName, task.taskDescription, task.taskDueDate, task.taskPriority, newStatus);
+        renderTasks();
+      }
+    } {
+  }})
 }
 
 export { initializeEventListeners };
