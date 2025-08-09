@@ -1,5 +1,5 @@
 import { Task, Project, taskList, projectList,findTaskById,deleteTask } from "./module.js";
-import { addTaskDialog, addProjectDialog } from "./dialog.js";
+import { addTaskDialog, addProjectDialog, editTask } from "./dialog.js";
 import { renderTasks, renderProjects } from "./render.js";
 
 function initializeEventListeners() {
@@ -28,7 +28,7 @@ function initializeEventListeners() {
       const dialog = event.target.closest("dialog");
       if (dialog) {
         const form = dialog.querySelector("form");
-        if (form) {
+        if (form.checkValidity()) {
           const formData = new FormData(form);
           const taskName = formData.get("task-name");
           const taskDescription = formData.get("task-description");
@@ -55,8 +55,8 @@ function initializeEventListeners() {
     if (event.target.matches(".save-project")) {
       const dialog = event.target.closest("dialog");
       if (dialog) {
-        const form = dialog.querySelector("form");
-        if (form) {
+        const form = dialog.querySelector("form")
+        if (form.checkValidity()) {
           const formData = new FormData(form);
           const projectName = formData.get("project-name");
           const projectDescription = formData.get("project-description");
@@ -80,7 +80,19 @@ function initializeEventListeners() {
         renderTasks();
       }
     }
+  });
 
+  //handles the edit button clicks
+  document.addEventListener("click", (event) => {
+    if (event.target.matches(".edit-btn")) {
+      const taskCard = event.target.closest(".task-card");
+      const taskId = taskCard.dataset.taskId;
+      const task = findTaskById(taskId);
+      if (task) {
+        editTask(task);
+        renderTasks();
+      }
+    }
   });
 }
 

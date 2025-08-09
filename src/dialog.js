@@ -58,6 +58,16 @@ function addTaskDialog() {
   dialog.showModal();
 }
 
+function editTask(task){
+    addTaskDialog();
+    const form = document.querySelector(".task-form");
+    form.querySelector(".task-name").value = task.taskName;
+    form.querySelector(".task-description").value = task.taskDescription;
+    form.querySelector(".task-priority").value = task.taskPriority;
+    form.querySelector(".task-due-date").value = task.taskDueDate;
+    form.querySelector(".task-project").value = task.taskProject;
+}   
+
 function addProjectDialog() {
     const dialog = document.createElement("dialog");
     dialog.classList.add("add-project-dialog");
@@ -95,4 +105,4 @@ function addProjectDialog() {
     dialog.showModal();
 }
 
-export { addTaskDialog,addProjectDialog };
+export { addTaskDialog,addProjectDialog,editTask };
