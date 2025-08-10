@@ -43,7 +43,7 @@ function initializeEventListeners() {
           const taskDescription = formData.get("task-description");
           const taskDueDate = formData.get("task-due-date");
           const taskPriority = formData.get("task-priority");
-          const taskCompleted = formData.get("task-completed");
+          const taskCompleted = formData.get("task-completed") === "on";
           const taskProject = formData.get("task-project");
 
           const task = new Task(
@@ -78,6 +78,7 @@ function initializeEventListeners() {
           // Re-render projects to show the new project
           renderProjects();
           dialog.close();
+          dialog.remove();
         }
       }
     }
@@ -119,13 +120,20 @@ function initializeEventListeners() {
           const newDueDate = formData.get("task-due-date");
           const newPriority = formData.get("task-priority");
           const taskId = formData.get("task-id");
-          const newCompleted = formData.get("task-completed");
+          const newCompleted = formData.get("task-completed") === "on";
           const newProject = formData.get("task-project");
-
 
           const task = findTaskById(taskId);
           if (task) {
-            editTask(task, newName, newDescription, newDueDate, newPriority,newCompleted,newProject);
+            editTask(
+              task,
+              newName,
+              newDescription,
+              newDueDate,
+              newPriority,
+              newCompleted,
+              newProject
+            );
             renderTasks();
             dialog.close();
             dialog.remove();
@@ -149,12 +157,11 @@ function initializeEventListeners() {
           task.taskDescription,
           task.taskDueDate,
           task.taskPriority,
-          newCompleted
+          newCompleted,
+          task.taskProject
         );
-        taskCard.classList.toggle("completed", task.taskCompleted);
+        taskCard.classList.toggle("completed", newCompleted);
       }
-    }
-    {
     }
   });
 }
