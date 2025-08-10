@@ -8,7 +8,7 @@ class Task {
     taskDescription,
     taskDueDate,
     taskPriority,
-    taskStatus = false
+    taskCompleted = false
   ) {
     this.taskName = taskName;
     this.taskDescription = taskDescription;
@@ -16,7 +16,7 @@ class Task {
     this.taskDueDate = taskDueDate;
     this.taskPriority = taskPriority;
     this.id = crypto.randomUUID();
-    this.taskStatus = taskStatus;
+    this.taskCompleted = taskCompleted;
 
     addTaskToList(this);
     addTaskToLocalStorage(this);
@@ -39,12 +39,12 @@ function deleteTask(task) {
   localStorage.removeItem(task.id);
 }
 
-function editTask(task,newName, newDescription, newDueDate, newPriority, newStatus = task.taskStatus) {
+function editTask(task,newName, newDescription, newDueDate, newPriority, newCompleted = task.taskCompleted) {
   task.taskName = newName;
   task.taskDescription = newDescription;
   task.taskDueDate = newDueDate;
   task.taskPriority = newPriority;
-  task.taskStatus = newStatus;
+  task.taskCompleted = newCompleted;
   addTaskToLocalStorage(task); // Update localStorage
 }
 
@@ -55,10 +55,10 @@ function findTaskById(id) {
 
 // Filter functions
 function getCompletedTasks() {
-  return taskList.filter((task) => task.taskStatus);
+  return taskList.filter((task) => task.taskCompleted);
 }
 function getPendingTasks() {
-  return taskList.filter((task) => !task.taskStatus);
+  return taskList.filter((task) => !task.taskCompleted);
 }
 
 // project management class

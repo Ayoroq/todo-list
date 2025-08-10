@@ -212,6 +212,15 @@ body {
     display: none;
 }
 
+.task-card.completed .task-name {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+.task-card.completed {
+  background: #f8f9fa;
+}
+
 .hidden {
     display: none;
 }

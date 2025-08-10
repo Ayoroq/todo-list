@@ -48,7 +48,7 @@ function initializeEventListeners() {
             taskName,
             taskDescription,
             taskDueDate,
-            taskPriority,
+            taskPriority
           );
 
           // Re-render tasks to show the new task
@@ -116,7 +116,6 @@ function initializeEventListeners() {
           const newPriority = formData.get("task-priority");
           const taskId = formData.get("task-id");
 
-
           const task = findTaskById(taskId);
           if (task) {
             editTask(task, newName, newDescription, newDueDate, newPriority);
@@ -131,20 +130,26 @@ function initializeEventListeners() {
 
   //handling when an item is marked as completed
   document.addEventListener("change", (event) => {
-    if (event.target.matches(".task-checkbox")){
-      const checkbox = event.target;
-      checkbox.toggleAttribute("checked");
+    if (event.target.matches(".task-checkbox")) {
       const taskCard = event.target.closest(".task-card");
       const taskId = taskCard.dataset.taskId;
       const task = findTaskById(taskId);
       if (task) {
-        console.log(task);
-        const newStatus = !task.taskStatus;
-        editTask(task, task.taskName, task.taskDescription, task.taskDueDate, task.taskPriority, newStatus);
-        renderTasks();
+        const newCompleted = !task.taskCompleted;
+        editTask(
+          task,
+          task.taskName,
+          task.taskDescription,
+          task.taskDueDate,
+          task.taskPriority,
+          newCompleted
+        );
+        taskCard.classList.toggle("completed", task.taskCompleted);
       }
-    } {
-  }})
+    }
+    {
+    }
+  });
 }
 
 export { initializeEventListeners };
