@@ -41,15 +41,46 @@ function addTaskToList(task) {
 
 // add task to local storage
 function addTaskToLocalStorage(task) {
-  localStorage.setItem(task.id, JSON.stringify(task));
+  try {
+    localStorage.setItem(task.id, JSON.stringify(task));
+  } catch (error) {
+    console.error('Failed to save task to localStorage:', error);
+  }
 }
 
 function deleteTask(task) {
+  if (task.taskProject) {
+    const project = findProjectById(task.taskProject);
+    if (project) {
+      project.deleteTaskFromProject(task);
+    }
+  }
   taskList.splice(taskList.indexOf(task), 1);
-  localStorage.removeItem(task.id);
+  try {
+    localStorage.removeItem(task.id);
+  } catch (error) {
+    console.error('Failed to remove task from localStorage:', error);
+  }
 }
 
 function editTask(task,newName, newDescription, newDueDate, newPriority, newCompleted = task.taskCompleted, newProject = task.taskProject) {
+   // Handle project change
+  if (task.taskProject !== newProject) {
+    if (task.taskProject) {
+      const oldProject = findProjectById(task.taskProject);
+      if (oldProject) {
+        oldProject.deleteTaskFromProject(task);
+      }
+    }
+    // Add to new project
+    if (newProject) {
+      const newProjectObj = findProjectById(newProject);
+      if (newProjectObj) {
+        addTaskToProject(newProjectObj, task);
+      }
+    }
+  }
+
   task.taskName = newName;
   task.taskDescription = newDescription;
   task.taskDueDate = newDueDate;
@@ -107,6 +138,7 @@ class Project {
 // adding task to project
 function  addTaskToProject(project,task) {
     project.tasks.push(task);
+    addProjectToLocalStorage(project); // Update localStorage
 }
 
 // Helper functions for project management
@@ -119,11 +151,19 @@ function removeProjectFromList(project) {
 }
 
 function addProjectToLocalStorage(project) {
-  localStorage.setItem(project.id, JSON.stringify(project));
+  try {
+    localStorage.setItem(project.id, JSON.stringify(project));
+  } catch (error) {
+    console.error('Failed to save project to localStorage:', error);
+  }
 }
 
 function removeProjectFromLocalStorage(project) {
-  localStorage.removeItem(project.id);
+  try {
+    localStorage.removeItem(project.id);
+  } catch (error) {
+    console.error('Failed to remove project from localStorage:', error);
+  }
 }
 
 function findProjectById(id) {
@@ -131,17 +171,29 @@ function findProjectById(id) {
 }
 
 function loadFromLocalStorage() {
-  for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i);
-    const item = JSON.parse(localStorage.getItem(key));
-
-    if (item.taskName) {
-      // It's a task
-      taskList.push(item);
-    } else if (item.projectName) {
-      // It's a project
-      projectList.push(item);
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      const itemString = localStorage.getItem(key);
+      
+      if (itemString) {
+        try {
+          const item = JSON.parse(itemString);
+          
+          if (item.taskName) {
+            // It's a task
+            taskList.push(item);
+          } else if (item.projectName) {
+            // It's a project
+            projectList.push(item);
+          }
+        } catch (parseError) {
+          console.error(`Failed to parse item with key ${key}:`, parseError);
+        }
+      }
     }
+  } catch (error) {
+    console.error('Failed to load from localStorage:', error);
   }
 }
 
@@ -157,4 +209,5 @@ export {
   loadFromLocalStorage,
   deleteTask,
   editTask,
+  addTaskToProject,
 };
