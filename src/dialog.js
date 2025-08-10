@@ -1,11 +1,15 @@
+import { projectList } from "./module.js";
+
 const body = document.querySelector("body");
-function addTaskDialog() {
+function taskDialog(task = null) {
+  const isEdit = task !== null;
   const dialog = document.createElement("dialog");
-  dialog.classList.add("add-task-dialog");
+  dialog.classList.add(isEdit ? "edit-task-dialog" : "add-task-dialog");
   dialog.setAttribute("closedby", "closerequest");
+  
   dialog.innerHTML = `
     <form action="" class="task-form" method="dialog">
-    <h2>Add New Task</h2>
+    <h2>${isEdit ? 'Edit Task' : 'Add New Task'}</h2>
     <p>
         <label for="task-name" class="visually-hidden">Task Name</label>
         <input
@@ -14,6 +18,7 @@ function addTaskDialog() {
         class="task-name"
         placeholder="Task Name"
         id="task-name"
+        value="${isEdit ? task.taskName : ''}"
         required
         />
     </p>
@@ -24,7 +29,7 @@ function addTaskDialog() {
         class="task-description"
         placeholder="Task Description"
         id="task-description"
-        ></textarea>
+        >${isEdit ? task.taskDescription : ''}</textarea>
     </p>
     <p>
         <label for="task-priority">Choose a priority</label>
@@ -33,14 +38,14 @@ function addTaskDialog() {
         class="task-priority"
         id="task-priority"
         >
-        <option value="high">High</option>
-        <option value="medium">Medium</option>
-        <option value="low">Low</option>
+        <option value="high" ${isEdit && task.taskPriority === 'high' ? 'selected' : ''}>High</option>
+        <option value="medium" ${isEdit && task.taskPriority === 'medium' ? 'selected' : ''}>Medium</option>
+        <option value="low" ${isEdit && task.taskPriority === 'low' ? 'selected' : ''}>Low</option>
         </select>
     </p>
     <p>
         <label for="task-due-date">Task Due date</label>
-        <input type="datetime-local" name="task-due-date" class="task-due-date" id="task-due-date">
+        <input type="datetime-local" name="task-due-date" class="task-due-date" id="task-due-date" value="${isEdit ? task.taskDueDate : ''}">
     </p>
     <p>
         <label for="task-project">Add to Project</label>
@@ -48,82 +53,40 @@ function addTaskDialog() {
         <option value="">No Project</option>
         </select>
     </p>
+    ${isEdit ? `<input type="hidden" name="task-id" value="${task.id}">` : ''}
     <div class="dialog-buttons">
         <button type="button" class="close">Cancel</button>
-        <button type="submit" class="save-task">Save</button>
+        <button type="submit" class="${isEdit ? 'save-edit-task' : 'save-task'}">${isEdit ? 'Update' : 'Save'}</button>
     </div>
     </form>`;
 
   body.appendChild(dialog);
   dialog.showModal();
+
+  // Populate projects dropdown
+  const projectSelect = dialog.querySelector(".task-project");
+  projectList.forEach(project => {
+    const option = document.createElement("option");
+    option.value = project.id;
+    option.textContent = project.projectName;
+    projectSelect.appendChild(option);
+  });
+}
+
+// Convenience functions
+function addTaskDialog() {
+  taskDialog();
 }
 
 function editTaskDialog(task) {
-  const dialog = document.createElement("dialog");
-  dialog.classList.add("edit-task-dialog");
-  dialog.setAttribute("closedby", "closerequest");
-  dialog.innerHTML = `
-    <form action="" class="edit-task-form" method="dialog">
-    <h2>Edit Task</h2>
-    <p>
-        <label for="edit-task-name" class="visually-hidden">Task Name</label>
-        <input
-        type="text"
-        name="task-name"
-        class="task-name"
-        placeholder="Task Name"
-        id="edit-task-name"
-        value="${task.taskName}"
-        required
-        />
-    </p>
-    <p>
-        <label for="edit-task-description" class="visually-hidden">Task Description</label>
-        <textarea
-        name="task-description"
-        class="task-description"
-        placeholder="Task Description"
-        id="edit-task-description"
-        >${task.taskDescription}</textarea>
-    </p>
-    <p>
-        <label for="edit-task-priority">Choose a priority</label>
-        <select
-        name="task-priority"
-        class="task-priority"
-        id="edit-task-priority"
-        >
-        <option value="high" ${task.taskPriority === 'high' ? 'selected' : ''}>High</option>
-        <option value="medium" ${task.taskPriority === 'medium' ? 'selected' : ''}>Medium</option>
-        <option value="low" ${task.taskPriority === 'low' ? 'selected' : ''}>Low</option>
-        </select>
-    </p>
-    <p>
-        <label for="edit-task-due-date">Task Due date</label>
-        <input type="datetime-local" name="task-due-date" class="task-due-date" id="edit-task-due-date" value="${task.taskDueDate}">
-    </p>
-    <p>
-        <label for="edit-task-project">Add to Project</label>
-        <select name="task-project" class="task-project" id="edit-task-project">
-        <option value="">No Project</option>
-        </select>
-    </p>
-    <input type="hidden" name="task-id" value="${task.id}">
-    <div class="dialog-buttons">
-        <button type="button" class="close">Cancel</button>
-        <button type="submit" class="save-edit-task">Update</button>
-    </div>
-    </form>`;
-
-  body.appendChild(dialog);
-  dialog.showModal();
-}   
+  taskDialog(task);
+}
 
 function addProjectDialog() {
-    const dialog = document.createElement("dialog");
-    dialog.classList.add("add-project-dialog");
-    dialog.setAttribute("closedby", "closerequest");
-    dialog.innerHTML = `
+  const dialog = document.createElement("dialog");
+  dialog.classList.add("add-project-dialog");
+  dialog.setAttribute("closedby", "closerequest");
+  dialog.innerHTML = `
     <form action="" class="project-form" method="dialog">
     <h2>Add New Project</h2>
     <p>
@@ -152,8 +115,8 @@ function addProjectDialog() {
     </div>
     </form>`;
 
-    body.appendChild(dialog);
-    dialog.showModal();
+  body.appendChild(dialog);
+  dialog.showModal();
 }
 
-export { addTaskDialog,addProjectDialog,editTaskDialog };
+export { addTaskDialog, addProjectDialog, editTaskDialog, taskDialog };

@@ -55,7 +55,13 @@ function renderProjects() {
   projectFilter.innerHTML = "";
   projectFilter.appendChild(allButton);
 
-  // Add each project as a button
+  // Add each project as a button and also as an option in the add task form
+  if (projectList.length === 0) {
+    const emptyMessage = document.createElement("p");
+    emptyMessage.textContent = "No projects available.";
+    projectFilter.appendChild(emptyMessage);
+    return;
+  }
   projectList.forEach((project) => {
     const projectBtn = document.createElement("button");
     projectBtn.textContent = project.projectName;
