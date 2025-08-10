@@ -1,4 +1,4 @@
-import { projectList } from "./module.js";
+import { projectList, findProjectById } from "./module.js";
 
 const body = document.querySelector("body");
 function taskDialog(task = null) {
@@ -6,10 +6,10 @@ function taskDialog(task = null) {
   const dialog = document.createElement("dialog");
   dialog.classList.add(isEdit ? "edit-task-dialog" : "add-task-dialog");
   dialog.setAttribute("closedby", "closerequest");
-  
+
   dialog.innerHTML = `
     <form action="" class="task-form" method="dialog">
-    <h2>${isEdit ? 'Edit Task' : 'Add New Task'}</h2>
+    <h2>${isEdit ? "Edit Task" : "Add New Task"}</h2>
     <p>
         <label for="task-name" class="visually-hidden">Task Name</label>
         <input
@@ -18,7 +18,7 @@ function taskDialog(task = null) {
         class="task-name"
         placeholder="Task Name"
         id="task-name"
-        value="${isEdit ? task.taskName : ''}"
+        value="${isEdit ? task.taskName : ""}"
         required
         />
     </p>
@@ -29,7 +29,7 @@ function taskDialog(task = null) {
         class="task-description"
         placeholder="Task Description"
         id="task-description"
-        >${isEdit ? task.taskDescription : ''}</textarea>
+        >${isEdit ? task.taskDescription : ""}</textarea>
     </p>
     <p>
         <label for="task-priority">Choose a priority</label>
@@ -38,14 +38,22 @@ function taskDialog(task = null) {
         class="task-priority"
         id="task-priority"
         >
-        <option value="high" ${isEdit && task.taskPriority === 'high' ? 'selected' : ''}>High</option>
-        <option value="medium" ${isEdit && task.taskPriority === 'medium' ? 'selected' : ''}>Medium</option>
-        <option value="low" ${isEdit && task.taskPriority === 'low' ? 'selected' : ''}>Low</option>
+        <option value="high" ${
+          isEdit && task.taskPriority === "high" ? "selected" : ""
+        }>High</option>
+        <option value="medium" ${
+          isEdit && task.taskPriority === "medium" ? "selected" : ""
+        }>Medium</option>
+        <option value="low" ${
+          isEdit && task.taskPriority === "low" ? "selected" : ""
+        }>Low</option>
         </select>
     </p>
     <p>
         <label for="task-due-date">Task Due date</label>
-        <input type="datetime-local" name="task-due-date" class="task-due-date" id="task-due-date" value="${isEdit ? task.taskDueDate : ''}">
+        <input type="datetime-local" name="task-due-date" class="task-due-date" id="task-due-date" value="${
+          isEdit ? task.taskDueDate : ""
+        }">
     </p>
     <p>
         <label for="task-project">Add to Project</label>
@@ -53,10 +61,12 @@ function taskDialog(task = null) {
         <option value="">No Project</option>
         </select>
     </p>
-    ${isEdit ? `<input type="hidden" name="task-id" value="${task.id}">` : ''}
+    ${isEdit ? `<input type="hidden" name="task-id" value="${task.id}">` : ""}
     <div class="dialog-buttons">
         <button type="button" class="close">Cancel</button>
-        <button type="submit" class="${isEdit ? 'save-edit-task' : 'save-task'}">${isEdit ? 'Update' : 'Save'}</button>
+        <button type="submit" class="${
+          isEdit ? "save-edit-task" : "save-task"
+        }">${isEdit ? "Update" : "Save"}</button>
     </div>
     </form>`;
 
@@ -65,10 +75,11 @@ function taskDialog(task = null) {
 
   // Populate projects dropdown
   const projectSelect = dialog.querySelector(".task-project");
-  projectList.forEach(project => {
+  projectList.forEach((project) => {
     const option = document.createElement("option");
     option.value = project.id;
     option.textContent = project.projectName;
+    option.selected = isEdit && task.taskProject === project.id;
     projectSelect.appendChild(option);
   });
 }
@@ -82,13 +93,15 @@ function editTaskDialog(task) {
   taskDialog(task);
 }
 
-function addProjectDialog() {
+function projectDialog(project = null) {
+  const isEdit = project !== null;
   const dialog = document.createElement("dialog");
-  dialog.classList.add("add-project-dialog");
+  dialog.classList.add(isEdit ? "edit-project-dialog" : "add-project-dialog");
   dialog.setAttribute("closedby", "closerequest");
+
   dialog.innerHTML = `
     <form action="" class="project-form" method="dialog">
-    <h2>Add New Project</h2>
+    <h2>${isEdit ? "Edit Project" : "Add New Project"}</h2>
     <p>
         <label for="project-name" class="visually-hidden">Project Name</label>
         <input
@@ -97,6 +110,7 @@ function addProjectDialog() {
         class="project-name"
         placeholder="Project Name"
         id="project-name"
+        value="${isEdit ? project.projectName : ""}"
         required
         />
     </p>
@@ -107,11 +121,18 @@ function addProjectDialog() {
         class="project-description"
         placeholder="Project Description"
         id="project-description"
-        ></textarea>
+        >${isEdit ? project.projectDescription : ""}</textarea>
     </p>
+    ${
+      isEdit
+        ? `<input type="hidden" name="project-id" value="${project.id}">`
+        : ""
+    }
     <div class="dialog-buttons">
         <button type="button" class="close">Cancel</button>
-        <button type="submit" class="save-project">Save</button>
+        <button type="submit" class="${
+          isEdit ? "save-edit-project" : "save-project"
+        }">${isEdit ? "Update" : "Save"}</button>
     </div>
     </form>`;
 
@@ -119,4 +140,20 @@ function addProjectDialog() {
   dialog.showModal();
 }
 
-export { addTaskDialog, addProjectDialog, editTaskDialog, taskDialog };
+// Convenience functions
+function addProjectDialog() {
+  projectDialog();
+}
+
+function editProjectDialog(project) {
+  projectDialog(project);
+}
+
+export {
+  addTaskDialog,
+  addProjectDialog,
+  editTaskDialog,
+  editProjectDialog,
+  taskDialog,
+  projectDialog,
+};

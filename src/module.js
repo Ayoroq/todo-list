@@ -8,7 +8,8 @@ class Task {
     taskDescription,
     taskDueDate,
     taskPriority,
-    taskCompleted = false
+    taskCompleted = false,
+    taskProject = null
   ) {
     this.taskName = taskName;
     this.taskDescription = taskDescription;
@@ -17,9 +18,18 @@ class Task {
     this.taskPriority = taskPriority;
     this.id = crypto.randomUUID();
     this.taskCompleted = taskCompleted;
+    this.taskProject = taskProject;
 
+    // Automatically add to task list and localStorage
     addTaskToList(this);
     addTaskToLocalStorage(this);
+
+    if (this.taskProject) {
+      const project = findProjectById(this.taskProject);
+      if (project) {
+        addTaskToProject(project,this);
+      }
+    }
   }
 }
 
@@ -39,12 +49,13 @@ function deleteTask(task) {
   localStorage.removeItem(task.id);
 }
 
-function editTask(task,newName, newDescription, newDueDate, newPriority, newCompleted = task.taskCompleted) {
+function editTask(task,newName, newDescription, newDueDate, newPriority, newCompleted = task.taskCompleted, newProject = task.taskProject) {
   task.taskName = newName;
   task.taskDescription = newDescription;
   task.taskDueDate = newDueDate;
   task.taskPriority = newPriority;
   task.taskCompleted = newCompleted;
+  task.taskProject = newProject;
   addTaskToLocalStorage(task); // Update localStorage
 }
 
@@ -75,10 +86,6 @@ class Project {
     addProjectToLocalStorage(this);
   }
 
-  // adding task to project
-  addTaskToProject(task) {
-    this.tasks.push(task);
-  }
 
   // delete a task from a project
   deleteTaskFromProject(task) {
@@ -95,6 +102,11 @@ class Project {
     this.projectName = newName || this.projectName;
     addProjectToLocalStorage(this); // Update localStorage
   }
+}
+
+// adding task to project
+function  addTaskToProject(project,task) {
+    project.tasks.push(task);
 }
 
 // Helper functions for project management

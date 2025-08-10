@@ -43,12 +43,16 @@ function initializeEventListeners() {
           const taskDescription = formData.get("task-description");
           const taskDueDate = formData.get("task-due-date");
           const taskPriority = formData.get("task-priority");
+          const taskCompleted = formData.get("task-completed");
+          const taskProject = formData.get("task-project");
 
           const task = new Task(
             taskName,
             taskDescription,
             taskDueDate,
-            taskPriority
+            taskPriority,
+            taskCompleted,
+            taskProject
           );
 
           // Re-render tasks to show the new task
@@ -115,10 +119,13 @@ function initializeEventListeners() {
           const newDueDate = formData.get("task-due-date");
           const newPriority = formData.get("task-priority");
           const taskId = formData.get("task-id");
+          const newCompleted = formData.get("task-completed");
+          const newProject = formData.get("task-project");
+
 
           const task = findTaskById(taskId);
           if (task) {
-            editTask(task, newName, newDescription, newDueDate, newPriority);
+            editTask(task, newName, newDescription, newDueDate, newPriority,newCompleted,newProject);
             renderTasks();
             dialog.close();
             dialog.remove();
