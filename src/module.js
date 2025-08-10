@@ -52,7 +52,7 @@ function deleteTask(task) {
   if (task.taskProject) {
     const project = findProjectById(task.taskProject);
     if (project) {
-      project.deleteTaskFromProject(task);
+      deleteTaskFromProject(project,task);
     }
   }
   taskList.splice(taskList.indexOf(task), 1);
@@ -117,12 +117,6 @@ class Project {
     addProjectToLocalStorage(this);
   }
 
-
-  // delete a task from a project
-  deleteTaskFromProject(task) {
-    this.tasks.splice(this.tasks.indexOf(task), 1);
-  }
-
   // delete project
   delete() {
     removeProjectFromList(this);
@@ -145,6 +139,12 @@ function  addTaskToProject(project,task) {
 function addProjectToList(project) {
   projectList.push(project);
 }
+
+// delete a task from a project
+ function deleteTaskFromProject(project,task) {
+    project.tasks.splice(project.tasks.indexOf(task), 1);
+    addProjectToLocalStorage(project); // Update localStorage
+  }
 
 function removeProjectFromList(project) {
   projectList.splice(projectList.indexOf(project), 1);

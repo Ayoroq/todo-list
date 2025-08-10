@@ -164,6 +164,25 @@ function initializeEventListeners() {
       }
     }
   });
+
+  // handling the filtering of the project when the button is clicked
+  document.addEventListener("click", (event) => {
+    if (event.target.matches(".project-filter button")) {
+      const projectId = event.target.dataset.projectId;
+      if (projectId === "all") {
+        renderTasks();
+        return;
+      }
+      const project = projectList.find((p) => p.id === projectId);
+      console.log(project);
+      if (project) {
+        const filteredTasks = taskList.filter(
+          (task) => task.taskProject === project.id
+        );
+        renderTasks(filteredTasks);
+      }
+    }
+  })
 }
 
 export { initializeEventListeners };
