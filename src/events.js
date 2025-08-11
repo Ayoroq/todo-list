@@ -174,13 +174,19 @@ function initializeEventListeners() {
   //handling the filtering of task when the buttons are clicked
   document.addEventListener("click", (event) => {
     if (event.target.matches(".task-filter button")) {
-      const attribute = event.target.getAttribute("data-filter");
-      if(attribute === "all"){
-        renderAll();
-      }
-      else if(attribute === 'today'){
-        const tasks = getTodayTasks();
-        renderTasksByFilter("Today's", tasks);
+      const filterType = event.target.getAttribute("data-filter");
+      
+      const filterMap = {
+        'all': () => renderAll(),
+        'today': () => renderTasksByFilter("Today's", getTodayTasks()),
+        'completed': () => renderTasksByFilter("Completed", getCompletedTasks()),
+        'overdue': () => renderTasksByFilter("Overdue", getOverdueTasks()),
+        'this-week': () => renderTasksByFilter("This Week's", getThisWeeksTasks()),
+        'high-priority': () => renderTasksByFilter("High Priority", getHighPriorityTasks())
+      };
+      
+      if (filterMap[filterType]) {
+        filterMap[filterType]();
       }
     }
   })

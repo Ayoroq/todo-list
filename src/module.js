@@ -1,5 +1,7 @@
 const projectList = [];
 const taskList = [];
+const today = new Date();
+const formattedDate = today.toISOString().slice(0, 10);
 
 // class to create a task
 class Task {
@@ -112,32 +114,24 @@ function getPendingTasks() {
 }
 
 function getTodayTasks() {
-  const today = new Date();
-  const formattedDate = today.toISOString().slice(0, 10)
-  console.log(formattedDate)
   return taskList.filter((task) => {
-    return task.taskDueDate === formattedDate;
+    return task.taskDueDate && task.taskDueDate === formattedDate;
   });
 }
 
 function getOverdueTasks() {
-  const today = new Date();
   return taskList.filter((task) => {
-    const dueDate = new Date(task.taskDueDate);
-    return dueDate < today;
+    return task.taskDueDate < formattedDate && task.taskDueDate && task.taskCompleted === false;
   });
 }
 
 function getThisWeeksTasks() {
-  const today = new Date();
-  const startOfWeek = new Date(today);
-  startOfWeek.setDate(today.getDate() - today.getDay());
+  const nextWeek = new Date(today);
+  nextWeek.setDate(today.getDate() + 7);
+  const nextWeekFormatted = nextWeek.toISOString().slice(0, 10);
 
-  const endOfWeek = new Date(today);
-  endOfWeek.setDate(today.getDate() + (6 - today.getDay()));
   return taskList.filter((task) => {
-    const dueDate = new Date(task.taskDueDate);
-    return dueDate >= startOfWeek && dueDate <= endOfWeek;
+    return task.taskDueDate && task.taskDueDate >= formattedDate && task.taskDueDate <= nextWeekFormatted;
   });
 }
 
