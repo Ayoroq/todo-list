@@ -139,6 +139,13 @@ function getHighPriorityTasks() {
   return taskList.filter((task) => task.taskPriority === "high");
 }
 
+function searchTasks(query) {
+  return taskList.filter(task => 
+    task.taskName.toLowerCase().includes(query.toLowerCase()) ||
+    task.taskDescription.toLowerCase().includes(query.toLowerCase())
+  );
+}
+
 // project management class
 class Project {
   constructor(projectName, projectDescription = "") {
@@ -271,4 +278,5 @@ export {
   deleteTask,
   editTask,
   addTaskToProject,
+  searchTasks,
 };

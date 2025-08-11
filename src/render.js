@@ -1,4 +1,4 @@
-import { taskList, projectList } from "./module.js";
+import { taskList, projectList,searchTasks } from "./module.js";
 
 function renderTasks() {
   const mainContainer = document.querySelector(".main");

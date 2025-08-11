@@ -12,6 +12,7 @@ import {
   getOverdueTasks,
   getThisWeeksTasks,
   getHighPriorityTasks,
+  searchTasks,
 } from "./module.js";
 import { addTaskDialog, addProjectDialog, editTaskDialog } from "./dialog.js";
 import { renderTasks, renderProjects, renderAll, renderProjectTasks, renderTasksByFilter } from "./render.js";
@@ -200,6 +201,21 @@ function initializeEventListeners() {
       }
     }
   })
+
+  //handles the search bar
+  document.addEventListener("input", (event) => {
+    if (event.target.matches(".search")) {
+      const query = event.target.value.trim();
+      
+      if (query === "") {
+        renderAll();
+        return;
+      }
+      
+      const searchResults = searchTasks(query);
+      renderTasksByFilter(`Search: "${query}"`, searchResults);
+    }
+  });
 }
 
 export { initializeEventListeners };
