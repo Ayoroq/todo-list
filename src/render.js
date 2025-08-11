@@ -50,10 +50,9 @@ function createTaskCard(task) {
 function renderProjects() {
   const projectFilter = document.querySelector(".project-filter");
 
-  // Clear existing projects (keep "All" button)
-  const allButton = projectFilter.querySelector("button");
-  projectFilter.innerHTML = "";
-  projectFilter.appendChild(allButton);
+  // Remove only project buttons, keep "All" button
+  const projectButtons = projectFilter.querySelectorAll("button:not([data-project-id='all'])");
+  projectButtons.forEach(button => button.remove());
 
   // Add each project as a button and also as an option in the add task form
   if (projectList.length === 0) {
@@ -70,9 +69,31 @@ function renderProjects() {
   });
 }
 
+function renderProjectTasks(project) {
+  const mainContainer = document.querySelector(".main");
+
+  // Clear existing content
+  mainContainer.innerHTML = "";
+  const ProjectName = document.createElement("h2");
+  ProjectName.textContent = project.projectName;
+  mainContainer.appendChild(ProjectName);
+
+  // Render each task
+  if (project.tasks.length === 0) {
+    const emptyMessage = document.createElement("p");
+    emptyMessage.textContent = "No tasks available in this project.";
+    mainContainer.appendChild(emptyMessage);
+    return;
+  }
+  project.tasks.forEach((task) => {
+    const taskCard = createTaskCard(task);
+    mainContainer.appendChild(taskCard);
+  });
+}
+
 function renderAll() {
   renderTasks();
   renderProjects();
 }
 
-export { renderTasks, renderProjects, renderAll };
+export { renderTasks, renderProjects, renderAll, renderProjectTasks };

@@ -8,7 +8,7 @@ import {
   editTask,
 } from "./module.js";
 import { addTaskDialog, addProjectDialog, editTaskDialog } from "./dialog.js";
-import { renderTasks, renderProjects } from "./render.js";
+import { renderTasks, renderProjects, renderAll, renderProjectTasks } from "./render.js";
 
 function initializeEventListeners() {
   // Event delegation for dynamically created elements
@@ -174,12 +174,8 @@ function initializeEventListeners() {
         return;
       }
       const project = projectList.find((p) => p.id === projectId);
-      console.log(project);
       if (project) {
-        const filteredTasks = taskList.filter(
-          (task) => task.taskProject === project.id
-        );
-        renderTasks(filteredTasks);
+        renderProjectTasks(project);
       }
     }
   })
