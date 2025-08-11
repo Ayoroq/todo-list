@@ -5,6 +5,10 @@ function renderTasks() {
 
   // Clear existing content
   mainContainer.innerHTML = "";
+  const header = document.createElement("h2");
+  header.textContent = "All Tasks";
+  mainContainer.appendChild(header);
+
 
   // Render each task
   if (taskList.length === 0) {

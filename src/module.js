@@ -69,7 +69,7 @@ function editTask(task,newName, newDescription, newDueDate, newPriority, newComp
     if (task.taskProject) {
       const oldProject = findProjectById(task.taskProject);
       if (oldProject) {
-        oldProject.deleteTaskFromProject(task);
+        deleteTaskFromProject(oldProject,task);
       }
     }
     // Add to new project

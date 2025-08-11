@@ -51,7 +51,7 @@ function taskDialog(task = null) {
     </p>
     <p>
         <label for="task-due-date">Task Due date</label>
-        <input type="datetime-local" name="task-due-date" class="task-due-date" id="task-due-date" value="${
+        <input type="date" name="task-due-date" class="task-due-date" id="task-due-date" value="${
           isEdit ? task.taskDueDate : ""
         }">
     </p>
