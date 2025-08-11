@@ -94,7 +94,7 @@ function initializeEventListeners() {
       const taskCard = event.target.closest(".task-card");
       const taskId = taskCard.dataset.taskId;
       const task = findTaskById(taskId);
-      if (task) {
+      if (task && confirm(`Are you sure you want to delete the task ${task.taskName}?`)) {
         deleteTask(task);
         renderTasks();
       }

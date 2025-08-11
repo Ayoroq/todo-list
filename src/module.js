@@ -208,6 +208,10 @@ function findProjectById(id) {
 
 function loadFromLocalStorage() {
   try {
+    // First, load all items and separate tasks and projects
+    const tasks = [];
+    const projects = [];
+    
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
       const itemString = localStorage.getItem(key);
@@ -217,17 +221,34 @@ function loadFromLocalStorage() {
           const item = JSON.parse(itemString);
 
           if (item.taskName) {
-            // It's a task
-            taskList.push(item);
+            tasks.push(item);
           } else if (item.projectName) {
-            // It's a project
-            projectList.push(item);
+            // Reset tasks array for projects loaded from localStorage
+            item.tasks = [];
+            projects.push(item);
           }
         } catch (parseError) {
           console.error(`Failed to parse item with key ${key}:`, parseError);
         }
       }
     }
+    
+    // Add projects to projectList first
+    projects.forEach(project => projectList.push(project));
+    
+    // Add tasks to taskList and rebuild project relationships
+    tasks.forEach(task => {
+      taskList.push(task);
+      
+      // Rebuild task-project relationships
+      if (task.taskProject) {
+        const project = findProjectById(task.taskProject);
+        if (project) {
+          project.tasks.push(task);
+        }
+      }
+    });
+    
   } catch (error) {
     console.error("Failed to load from localStorage:", error);
   }
