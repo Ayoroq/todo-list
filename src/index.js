@@ -9,6 +9,10 @@ import {
   findProjectById,
   getCompletedTasks,
   getPendingTasks,
+  getTodayTasks,
+  getOverdueTasks,
+  getThisWeeksTasks,
+  getHighPriorityTasks,
   loadFromLocalStorage,
 } from "./module.js";
 

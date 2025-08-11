@@ -6,9 +6,15 @@ import {
   findTaskById,
   deleteTask,
   editTask,
+  getTodayTasks,
+  getCompletedTasks,
+  getPendingTasks,
+  getOverdueTasks,
+  getThisWeeksTasks,
+  getHighPriorityTasks,
 } from "./module.js";
 import { addTaskDialog, addProjectDialog, editTaskDialog } from "./dialog.js";
-import { renderTasks, renderProjects, renderAll, renderProjectTasks } from "./render.js";
+import { renderTasks, renderProjects, renderAll, renderProjectTasks, renderTasksByFilter } from "./render.js";
 
 function initializeEventListeners() {
   // Event delegation for dynamically created elements
@@ -165,14 +171,23 @@ function initializeEventListeners() {
     }
   });
 
+  //handling the filtering of task when the buttons are clicked
+  document.addEventListener("click", (event) => {
+    if (event.target.matches(".task-filter button")) {
+      const attribute = event.target.getAttribute("data-filter");
+      if(attribute === "all"){
+        renderAll();
+      }
+      else if(attribute === 'today'){
+        const tasks = getTodayTasks();
+        renderTasksByFilter("Today's", tasks);
+      }
+    }
+  })
   // handling the filtering of the project when the button is clicked
   document.addEventListener("click", (event) => {
     if (event.target.matches(".project-filter button")) {
       const projectId = event.target.dataset.projectId;
-      if (projectId === "all") {
-        renderTasks();
-        return;
-      }
       const project = projectList.find((p) => p.id === projectId);
       if (project) {
         renderProjectTasks(project);

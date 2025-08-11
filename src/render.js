@@ -95,9 +95,31 @@ function renderProjectTasks(project) {
   });
 }
 
+function renderTasksByFilter(filter, tasks) {
+  const mainContainer = document.querySelector(".main");
+
+  // Clear existing content
+  mainContainer.innerHTML = "";
+  const header = document.createElement("h2");
+  header.textContent = `${filter} Tasks`;
+  mainContainer.appendChild(header);
+
+  // Render each task
+  if (tasks.length === 0) {
+    const emptyMessage = document.createElement("p");
+    emptyMessage.textContent = "No tasks available.";
+    mainContainer.appendChild(emptyMessage);
+    return;
+  }
+  tasks.forEach((task) => {
+    const taskCard = createTaskCard(task);
+    mainContainer.appendChild(taskCard);
+  });
+}
+
 function renderAll() {
   renderTasks();
   renderProjects();
 }
 
-export { renderTasks, renderProjects, renderAll, renderProjectTasks };
+export { renderTasks, renderProjects, renderAll, renderProjectTasks, renderTasksByFilter };

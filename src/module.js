@@ -27,7 +27,7 @@ class Task {
     if (this.taskProject) {
       const project = findProjectById(this.taskProject);
       if (project) {
-        addTaskToProject(project,this);
+        addTaskToProject(project, this);
       }
     }
   }
@@ -44,7 +44,7 @@ function addTaskToLocalStorage(task) {
   try {
     localStorage.setItem(task.id, JSON.stringify(task));
   } catch (error) {
-    console.error('Failed to save task to localStorage:', error);
+    console.error("Failed to save task to localStorage:", error);
   }
 }
 
@@ -52,24 +52,32 @@ function deleteTask(task) {
   if (task.taskProject) {
     const project = findProjectById(task.taskProject);
     if (project) {
-      deleteTaskFromProject(project,task);
+      deleteTaskFromProject(project, task);
     }
   }
   taskList.splice(taskList.indexOf(task), 1);
   try {
     localStorage.removeItem(task.id);
   } catch (error) {
-    console.error('Failed to remove task from localStorage:', error);
+    console.error("Failed to remove task from localStorage:", error);
   }
 }
 
-function editTask(task,newName, newDescription, newDueDate, newPriority, newCompleted = task.taskCompleted, newProject = task.taskProject) {
-   // Handle project change
+function editTask(
+  task,
+  newName,
+  newDescription,
+  newDueDate,
+  newPriority,
+  newCompleted = task.taskCompleted,
+  newProject = task.taskProject
+) {
+  // Handle project change
   if (task.taskProject !== newProject) {
     if (task.taskProject) {
       const oldProject = findProjectById(task.taskProject);
       if (oldProject) {
-        deleteTaskFromProject(oldProject,task);
+        deleteTaskFromProject(oldProject, task);
       }
     }
     // Add to new project
@@ -103,6 +111,40 @@ function getPendingTasks() {
   return taskList.filter((task) => !task.taskCompleted);
 }
 
+function getTodayTasks() {
+  const today = new Date();
+  const formattedDate = today.toISOString().slice(0, 10)
+  console.log(formattedDate)
+  return taskList.filter((task) => {
+    return task.taskDueDate === formattedDate;
+  });
+}
+
+function getOverdueTasks() {
+  const today = new Date();
+  return taskList.filter((task) => {
+    const dueDate = new Date(task.taskDueDate);
+    return dueDate < today;
+  });
+}
+
+function getThisWeeksTasks() {
+  const today = new Date();
+  const startOfWeek = new Date(today);
+  startOfWeek.setDate(today.getDate() - today.getDay());
+
+  const endOfWeek = new Date(today);
+  endOfWeek.setDate(today.getDate() + (6 - today.getDay()));
+  return taskList.filter((task) => {
+    const dueDate = new Date(task.taskDueDate);
+    return dueDate >= startOfWeek && dueDate <= endOfWeek;
+  });
+}
+
+function getHighPriorityTasks() {
+  return taskList.filter((task) => task.taskPriority === "high");
+}
+
 // project management class
 class Project {
   constructor(projectName, projectDescription = "") {
@@ -130,9 +172,9 @@ class Project {
 }
 
 // adding task to project
-function  addTaskToProject(project,task) {
-    project.tasks.push(task);
-    addProjectToLocalStorage(project); // Update localStorage
+function addTaskToProject(project, task) {
+  project.tasks.push(task);
+  addProjectToLocalStorage(project); // Update localStorage
 }
 
 // Helper functions for project management
@@ -141,10 +183,10 @@ function addProjectToList(project) {
 }
 
 // delete a task from a project
- function deleteTaskFromProject(project,task) {
-    project.tasks.splice(project.tasks.indexOf(task), 1);
-    addProjectToLocalStorage(project); // Update localStorage
-  }
+function deleteTaskFromProject(project, task) {
+  project.tasks.splice(project.tasks.indexOf(task), 1);
+  addProjectToLocalStorage(project); // Update localStorage
+}
 
 function removeProjectFromList(project) {
   projectList.splice(projectList.indexOf(project), 1);
@@ -154,7 +196,7 @@ function addProjectToLocalStorage(project) {
   try {
     localStorage.setItem(project.id, JSON.stringify(project));
   } catch (error) {
-    console.error('Failed to save project to localStorage:', error);
+    console.error("Failed to save project to localStorage:", error);
   }
 }
 
@@ -162,7 +204,7 @@ function removeProjectFromLocalStorage(project) {
   try {
     localStorage.removeItem(project.id);
   } catch (error) {
-    console.error('Failed to remove project from localStorage:', error);
+    console.error("Failed to remove project from localStorage:", error);
   }
 }
 
@@ -175,11 +217,11 @@ function loadFromLocalStorage() {
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
       const itemString = localStorage.getItem(key);
-      
+
       if (itemString) {
         try {
           const item = JSON.parse(itemString);
-          
+
           if (item.taskName) {
             // It's a task
             taskList.push(item);
@@ -193,7 +235,7 @@ function loadFromLocalStorage() {
       }
     }
   } catch (error) {
-    console.error('Failed to load from localStorage:', error);
+    console.error("Failed to load from localStorage:", error);
   }
 }
 
@@ -206,6 +248,10 @@ export {
   findProjectById,
   getCompletedTasks,
   getPendingTasks,
+  getTodayTasks,
+  getOverdueTasks,
+  getThisWeeksTasks,
+  getHighPriorityTasks,
   loadFromLocalStorage,
   deleteTask,
   editTask,
