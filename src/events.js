@@ -193,8 +193,8 @@ function initializeEventListeners() {
   })
   // handling the filtering of the project when the button is clicked
   document.addEventListener("click", (event) => {
-    if (event.target.matches(".project-filter button")) {
-      const projectId = event.target.dataset.projectId;
+    if (event.target.matches(".project-btn")) {
+      const projectId = event.target.closest(".project-container").dataset.projectId;
       const project = projectList.find((p) => p.id === projectId);
       if (project) {
         renderProjectTasks(project);

@@ -66,10 +66,18 @@ function renderProjects() {
     return;
   }
   projectList.forEach((project) => {
-    const projectBtn = document.createElement("button");
-    projectBtn.textContent = project.projectName;
-    projectBtn.dataset.projectId = project.id;
-    projectFilter.appendChild(projectBtn);
+    const projectContainer = document.createElement("div");
+    projectContainer.className = "project-container";
+    projectContainer.dataset.projectId = project.id;
+    projectContainer.innerHTML = `
+      <button class="project-btn">${project.projectName}</button>
+      <div class="project-actions">
+        <button class="add-task-btn">+</button>
+        <button class="edit-project-btn">✏️</button>
+        <button class="delete-project-btn">🗑️</button>
+      </div>
+    `;
+    projectFilter.appendChild(projectContainer);
   });
 }
 
