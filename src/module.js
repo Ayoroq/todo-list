@@ -121,7 +121,11 @@ function getTodayTasks() {
 
 function getOverdueTasks() {
   return taskList.filter((task) => {
-    return task.taskDueDate < formattedDate && task.taskDueDate && task.taskCompleted === false;
+    return (
+      task.taskDueDate < formattedDate &&
+      task.taskDueDate &&
+      task.taskCompleted === false
+    );
   });
 }
 
@@ -131,7 +135,11 @@ function getThisWeeksTasks() {
   const nextWeekFormatted = nextWeek.toISOString().slice(0, 10);
 
   return taskList.filter((task) => {
-    return task.taskDueDate && task.taskDueDate >= formattedDate && task.taskDueDate <= nextWeekFormatted;
+    return (
+      task.taskDueDate &&
+      task.taskDueDate >= formattedDate &&
+      task.taskDueDate <= nextWeekFormatted
+    );
   });
 }
 
@@ -140,9 +148,10 @@ function getHighPriorityTasks() {
 }
 
 function searchTasks(query) {
-  return taskList.filter(task => 
-    task.taskName.toLowerCase().includes(query.toLowerCase()) ||
-    task.taskDescription.toLowerCase().includes(query.toLowerCase())
+  return taskList.filter(
+    (task) =>
+      task.taskName.toLowerCase().includes(query.toLowerCase()) ||
+      task.taskDescription.toLowerCase().includes(query.toLowerCase())
   );
 }
 
@@ -160,12 +169,6 @@ class Project {
     addProjectToLocalStorage(this);
   }
 
-  // delete project
-  delete() {
-    removeProjectFromList(this);
-    removeProjectFromLocalStorage(this);
-  }
-
   edit(newName) {
     this.projectName = newName || this.projectName;
     addProjectToLocalStorage(this); // Update localStorage
@@ -176,6 +179,20 @@ class Project {
 function addTaskToProject(project, task) {
   project.tasks.push(task);
   addProjectToLocalStorage(project); // Update localStorage
+}
+
+//function to delete project
+function deleteProject(project) {
+  // Disassociate tasks from project instead of deleting them
+  if (project.tasks.length > 0) {
+    project.tasks.forEach((task) => {
+      task.taskProject = null;
+      addTaskToLocalStorage(task);
+    });
+  }
+  
+  removeProjectFromList(project);
+  removeProjectFromLocalStorage(project);
 }
 
 // Helper functions for project management
@@ -218,7 +235,7 @@ function loadFromLocalStorage() {
     // First, load all items and separate tasks and projects
     const tasks = [];
     const projects = [];
-    
+
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
       const itemString = localStorage.getItem(key);
@@ -239,14 +256,14 @@ function loadFromLocalStorage() {
         }
       }
     }
-    
+
     // Add projects to projectList first
-    projects.forEach(project => projectList.push(project));
-    
+    projects.forEach((project) => projectList.push(project));
+
     // Add tasks to taskList and rebuild project relationships
-    tasks.forEach(task => {
+    tasks.forEach((task) => {
       taskList.push(task);
-      
+
       // Rebuild task-project relationships
       if (task.taskProject) {
         const project = findProjectById(task.taskProject);
@@ -255,7 +272,6 @@ function loadFromLocalStorage() {
         }
       }
     });
-    
   } catch (error) {
     console.error("Failed to load from localStorage:", error);
   }
@@ -276,6 +292,7 @@ export {
   getHighPriorityTasks,
   loadFromLocalStorage,
   deleteTask,
+  deleteProject,
   editTask,
   addTaskToProject,
   searchTasks,

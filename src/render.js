@@ -53,10 +53,7 @@ function createTaskCard(task) {
 
 function renderProjects() {
   const projectFilter = document.querySelector(".project-filter");
-
-  // Remove only project buttons, keep "All" button
-  const projectButtons = projectFilter.querySelectorAll("button:not([data-project-id='all'])");
-  projectButtons.forEach(button => button.remove());
+  projectFilter.innerHTML = "";
 
   // Add each project as a button and also as an option in the add task form
   if (projectList.length === 0) {

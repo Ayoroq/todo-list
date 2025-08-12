@@ -13,6 +13,7 @@ import {
   getThisWeeksTasks,
   getHighPriorityTasks,
   searchTasks,
+  deleteProject,
 } from "./module.js";
 import { addTaskDialog, addProjectDialog, editTaskDialog } from "./dialog.js";
 import { renderTasks, renderProjects, renderAll, renderProjectTasks, renderTasksByFilter } from "./render.js";
@@ -215,6 +216,18 @@ function initializeEventListeners() {
             projectSelect.value = project.id;
           }
         }, 0);
+      }
+    }
+  })
+
+  //handles the delete project button
+  document.addEventListener("click", (event) => {
+    if (event.target.matches(".delete-project-btn")) {
+      const projectId = event.target.closest(".project-container").dataset.projectId;
+      const project = projectList.find((p) => p.id === projectId);
+      if (project && confirm(`Are you sure you want to delete the project ${project.projectName}?`)) {
+        deleteProject(project);
+        renderProjects();
       }
     }
   })
