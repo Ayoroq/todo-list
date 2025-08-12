@@ -50,7 +50,12 @@ function getProjectFromContainer(element) {
   return projectList.find((p) => p.id === projectId);
 }
 
+// Prevent duplicate event listeners
+let eventListenersInitialized = false;
+
 function initializeEventListeners() {
+  if (eventListenersInitialized) return;
+  eventListenersInitialized = true;
   // Event delegation for dynamically created elements
   document.addEventListener("click", (event) => {
     // Handle add task button clicks
@@ -230,6 +235,7 @@ function initializeEventListeners() {
       }
     }
   });
+  
   //handling when an item is marked as completed
   document.addEventListener("change", (event) => {
     if (event.target.matches(".task-checkbox")) {

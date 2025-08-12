@@ -26,6 +26,7 @@ function renderTasks() {
 function createTaskCard(task) {
   const taskCard = document.createElement("div");
   taskCard.className = "task-card";
+  taskCard.classList.toggle("completed", task.taskCompleted);
   taskCard.dataset.taskId = task.id;
   taskCard.innerHTML = `
     <div class="task-header">
