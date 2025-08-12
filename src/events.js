@@ -202,6 +202,23 @@ function initializeEventListeners() {
     }
   })
 
+  // handles the add task to project button
+  document.addEventListener("click", (event) => {
+    if (event.target.matches(".add-task-btn")) {
+      const projectId = event.target.closest(".project-container").dataset.projectId;
+      const project = projectList.find((p) => p.id === projectId);
+      if (project) {
+        addTaskDialog();
+        setTimeout(() => {
+          const projectSelect = document.querySelector(".task-project");
+          if (projectSelect) {
+            projectSelect.value = project.id;
+          }
+        }, 0);
+      }
+    }
+  })
+
   //handles the search bar
   document.addEventListener("input", (event) => {
     if (event.target.matches(".search")) {
