@@ -16,8 +16,19 @@ import {
   searchTasks,
   deleteProject,
 } from "./module.js";
-import { addTaskDialog, addProjectDialog, editTaskDialog,editProjectDialog } from "./dialog.js";
-import { renderTasks, renderProjects, renderAll, renderProjectTasks, renderTasksByFilter } from "./render.js";
+import {
+  addTaskDialog,
+  addProjectDialog,
+  editTaskDialog,
+  editProjectDialog,
+} from "./dialog.js";
+import {
+  renderTasks,
+  renderProjects,
+  renderAll,
+  renderProjectTasks,
+  renderTasksByFilter,
+} from "./render.js";
 
 // Helper functions for repeated code
 function closeDialog(dialog) {
@@ -95,15 +106,16 @@ function initializeEventListeners() {
       const taskCard = event.target.closest(".task-card");
       const taskId = taskCard.dataset.taskId;
       const task = findTaskById(taskId);
-      if (task && confirm(`Are you sure you want to delete the task ${task.taskName}?`)) {
+      if (
+        task &&
+        confirm(`Are you sure you want to delete the task ${task.taskName}?`)
+      ) {
         deleteTask(task);
         renderTasks();
       }
     }
-  });
 
-  //handles the edit button clicks
-  document.addEventListener("click", (event) => {
+    //handles the edit button clicks
     if (event.target.matches(".edit-btn")) {
       const taskCard = event.target.closest(".task-card");
       const taskId = taskCard.dataset.taskId;
@@ -112,10 +124,8 @@ function initializeEventListeners() {
         editTaskDialog(task);
       }
     }
-  });
 
-  // handles the save on the edit task
-  document.addEventListener("click", (event) => {
+    // handles save on edit task
     if (event.target.matches(".save-edit-task")) {
       const dialog = event.target.closest("dialog");
       if (dialog) {
@@ -136,8 +146,90 @@ function initializeEventListeners() {
         });
       }
     }
-  });
 
+    //handling the filtering of task when the buttons are clicked
+
+    if (event.target.matches(".task-filter button")) {
+      const filterType = event.target.getAttribute("data-filter");
+
+      const filterMap = {
+        all: () => renderAll(),
+        today: () => renderTasksByFilter("Today's", getTodayTasks()),
+        completed: () => renderTasksByFilter("Completed", getCompletedTasks()),
+        overdue: () => renderTasksByFilter("Overdue", getOverdueTasks()),
+        "this-week": () =>
+          renderTasksByFilter("This Week's", getThisWeeksTasks()),
+        "high-priority": () =>
+          renderTasksByFilter("High Priority", getHighPriorityTasks()),
+      };
+
+      if (filterMap[filterType]) {
+        filterMap[filterType]();
+      }
+    }
+
+    // handling the filtering of the project when the button is clicked
+    if (event.target.matches(".project-btn")) {
+      const project = getProjectFromContainer(event.target);
+      if (project) {
+        renderProjectTasks(project);
+      }
+    }
+
+    // handles the add task to project button
+    if (event.target.matches(".add-task-btn")) {
+      const project = getProjectFromContainer(event.target);
+      if (project) {
+        addTaskDialog();
+        setTimeout(() => {
+          const projectSelect = document.querySelector(".task-project");
+          if (projectSelect) {
+            projectSelect.value = project.id;
+          }
+        }, 0);
+      }
+    }
+
+    //handles the edit project button
+    if (event.target.matches(".edit-project-btn")) {
+      const project = getProjectFromContainer(event.target);
+      if (project) {
+        editProjectDialog(project);
+      }
+    }
+
+    //handle save on the edit project
+    if (event.target.matches(".save-edit-project")) {
+      const dialog = event.target.closest("dialog");
+      if (dialog) {
+        processForm(dialog, (formData) => {
+          const project = findProjectById(formData.get("project-id"));
+          if (project) {
+            editProject(
+              project,
+              formData.get("project-name"),
+              formData.get("project-description")
+            );
+            renderProjects();
+          }
+        });
+      }
+    }
+
+    //handles the delete project button
+    if (event.target.matches(".delete-project-btn")) {
+      const project = getProjectFromContainer(event.target);
+      if (
+        project &&
+        confirm(
+          `Are you sure you want to delete the project ${project.projectName}?`
+        )
+      ) {
+        deleteProject(project);
+        renderProjects();
+      }
+    }
+  });
   //handling when an item is marked as completed
   document.addEventListener("change", (event) => {
     if (event.target.matches(".task-checkbox")) {
@@ -160,98 +252,16 @@ function initializeEventListeners() {
     }
   });
 
-  //handling the filtering of task when the buttons are clicked
-  document.addEventListener("click", (event) => {
-    if (event.target.matches(".task-filter button")) {
-      const filterType = event.target.getAttribute("data-filter");
-      
-      const filterMap = {
-        'all': () => renderAll(),
-        'today': () => renderTasksByFilter("Today's", getTodayTasks()),
-        'completed': () => renderTasksByFilter("Completed", getCompletedTasks()),
-        'overdue': () => renderTasksByFilter("Overdue", getOverdueTasks()),
-        'this-week': () => renderTasksByFilter("This Week's", getThisWeeksTasks()),
-        'high-priority': () => renderTasksByFilter("High Priority", getHighPriorityTasks())
-      };
-      
-      if (filterMap[filterType]) {
-        filterMap[filterType]();
-      }
-    }
-  })
-  // handling the filtering of the project when the button is clicked
-  document.addEventListener("click", (event) => {
-    if (event.target.matches(".project-btn")) {
-      const project = getProjectFromContainer(event.target);
-      if (project) {
-        renderProjectTasks(project);
-      }
-    }
-  })
-
-  // handles the add task to project button
-  document.addEventListener("click", (event) => {
-    if (event.target.matches(".add-task-btn")) {
-      const project = getProjectFromContainer(event.target);
-      if (project) {
-        addTaskDialog();
-        setTimeout(() => {
-          const projectSelect = document.querySelector(".task-project");
-          if (projectSelect) {
-            projectSelect.value = project.id;
-          }
-        }, 0);
-      }
-    }
-  })
-
-  //handles the edit project button
-  document.addEventListener("click", (event) => {
-    if (event.target.matches(".edit-project-btn")) {
-      const project = getProjectFromContainer(event.target);
-      if (project) {
-        editProjectDialog(project);
-      }
-    }
-  })
-
-  //handle save on the edit project
-  document.addEventListener("click", (event) => {
-    if (event.target.matches(".save-edit-project")) {
-      const dialog = event.target.closest("dialog");
-      if (dialog) {
-        processForm(dialog, (formData) => {
-          const project = findProjectById(formData.get("project-id"));
-          if (project) {
-            editProject(project, formData.get("project-name"), formData.get("project-description"));
-            renderProjects();
-          }
-        });
-      }
-    }
-  })
-
-  //handles the delete project button
-  document.addEventListener("click", (event) => {
-    if (event.target.matches(".delete-project-btn")) {
-      const project = getProjectFromContainer(event.target);
-      if (project && confirm(`Are you sure you want to delete the project ${project.projectName}?`)) {
-        deleteProject(project);
-        renderProjects();
-      }
-    }
-  })
-
   //handles the search bar
   document.addEventListener("input", (event) => {
     if (event.target.matches(".search")) {
       const query = event.target.value.trim();
-      
+
       if (query === "") {
         renderAll();
         return;
       }
-      
+
       const searchResults = searchTasks(query);
       renderTasksByFilter(`Search: "${query}"`, searchResults);
     }
