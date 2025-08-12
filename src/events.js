@@ -19,6 +19,26 @@ import {
 import { addTaskDialog, addProjectDialog, editTaskDialog,editProjectDialog } from "./dialog.js";
 import { renderTasks, renderProjects, renderAll, renderProjectTasks, renderTasksByFilter } from "./render.js";
 
+// Helper functions for repeated code
+function closeDialog(dialog) {
+  dialog.close();
+  dialog.remove();
+}
+
+function processForm(dialog, callback) {
+  const form = dialog.querySelector("form");
+  if (form.checkValidity()) {
+    const formData = new FormData(form);
+    callback(formData);
+    closeDialog(dialog);
+  }
+}
+
+function getProjectFromContainer(element) {
+  const projectId = element.closest(".project-container").dataset.projectId;
+  return projectList.find((p) => p.id === projectId);
+}
+
 function initializeEventListeners() {
   // Event delegation for dynamically created elements
   document.addEventListener("click", (event) => {
@@ -35,40 +55,24 @@ function initializeEventListeners() {
     // Handle close button clicks in dialogs
     if (event.target.matches(".close")) {
       const dialog = event.target.closest("dialog");
-      if (dialog) {
-        dialog.close();
-        dialog.remove();
-      }
+      if (dialog) closeDialog(dialog);
     }
 
     // Handle save task button clicks
     if (event.target.matches(".save-task")) {
       const dialog = event.target.closest("dialog");
       if (dialog) {
-        const form = dialog.querySelector("form");
-        if (form.checkValidity()) {
-          const formData = new FormData(form);
-          const taskName = formData.get("task-name");
-          const taskDescription = formData.get("task-description");
-          const taskDueDate = formData.get("task-due-date");
-          const taskPriority = formData.get("task-priority");
-          const taskCompleted = formData.get("task-completed") === "on";
-          const taskProject = formData.get("task-project");
-
-          const task = new Task(
-            taskName,
-            taskDescription,
-            taskDueDate,
-            taskPriority,
-            taskCompleted,
-            taskProject
+        processForm(dialog, (formData) => {
+          new Task(
+            formData.get("task-name"),
+            formData.get("task-description"),
+            formData.get("task-due-date"),
+            formData.get("task-priority"),
+            formData.get("task-completed") === "on",
+            formData.get("task-project")
           );
-
-          // Re-render tasks to show the new task
           renderTasks();
-          dialog.close();
-          dialog.remove();
-        }
+        });
       }
     }
 
@@ -76,19 +80,13 @@ function initializeEventListeners() {
     if (event.target.matches(".save-project")) {
       const dialog = event.target.closest("dialog");
       if (dialog) {
-        const form = dialog.querySelector("form");
-        if (form.checkValidity()) {
-          const formData = new FormData(form);
-          const projectName = formData.get("project-name");
-          const projectDescription = formData.get("project-description");
-
-          const project = new Project(projectName, projectDescription);
-
-          // Re-render projects to show the new project
+        processForm(dialog, (formData) => {
+          new Project(
+            formData.get("project-name"),
+            formData.get("project-description")
+          );
           renderProjects();
-          dialog.close();
-          dialog.remove();
-        }
+        });
       }
     }
 
@@ -121,33 +119,21 @@ function initializeEventListeners() {
     if (event.target.matches(".save-edit-task")) {
       const dialog = event.target.closest("dialog");
       if (dialog) {
-        const form = dialog.querySelector("form");
-        if (form.checkValidity()) {
-          const formData = new FormData(form);
-          const newName = formData.get("task-name");
-          const newDescription = formData.get("task-description");
-          const newDueDate = formData.get("task-due-date");
-          const newPriority = formData.get("task-priority");
-          const taskId = formData.get("task-id");
-          const newCompleted = formData.get("task-completed") === "on";
-          const newProject = formData.get("task-project");
-
-          const task = findTaskById(taskId);
+        processForm(dialog, (formData) => {
+          const task = findTaskById(formData.get("task-id"));
           if (task) {
             editTask(
               task,
-              newName,
-              newDescription,
-              newDueDate,
-              newPriority,
-              newCompleted,
-              newProject
+              formData.get("task-name"),
+              formData.get("task-description"),
+              formData.get("task-due-date"),
+              formData.get("task-priority"),
+              formData.get("task-completed") === "on",
+              formData.get("task-project")
             );
             renderTasks();
-            dialog.close();
-            dialog.remove();
           }
-        }
+        });
       }
     }
   });
@@ -196,8 +182,7 @@ function initializeEventListeners() {
   // handling the filtering of the project when the button is clicked
   document.addEventListener("click", (event) => {
     if (event.target.matches(".project-btn")) {
-      const projectId = event.target.closest(".project-container").dataset.projectId;
-      const project = projectList.find((p) => p.id === projectId);
+      const project = getProjectFromContainer(event.target);
       if (project) {
         renderProjectTasks(project);
       }
@@ -207,8 +192,7 @@ function initializeEventListeners() {
   // handles the add task to project button
   document.addEventListener("click", (event) => {
     if (event.target.matches(".add-task-btn")) {
-      const projectId = event.target.closest(".project-container").dataset.projectId;
-      const project = projectList.find((p) => p.id === projectId);
+      const project = getProjectFromContainer(event.target);
       if (project) {
         addTaskDialog();
         setTimeout(() => {
@@ -224,8 +208,7 @@ function initializeEventListeners() {
   //handles the edit project button
   document.addEventListener("click", (event) => {
     if (event.target.matches(".edit-project-btn")) {
-      const projectId = event.target.closest(".project-container").dataset.projectId;
-      const project = projectList.find((p) => p.id === projectId);
+      const project = getProjectFromContainer(event.target);
       if (project) {
         editProjectDialog(project);
       }
@@ -237,21 +220,13 @@ function initializeEventListeners() {
     if (event.target.matches(".save-edit-project")) {
       const dialog = event.target.closest("dialog");
       if (dialog) {
-        const form = dialog.querySelector("form");
-        if (form.checkValidity()) {
-          const formData = new FormData(form);
-          const newName = formData.get("project-name");
-          const newDescription = formData.get("project-description");
-          const projectId = formData.get("project-id");
-
-          const project = findProjectById(projectId);
+        processForm(dialog, (formData) => {
+          const project = findProjectById(formData.get("project-id"));
           if (project) {
-            editProject(project,newName, newDescription);
+            editProject(project, formData.get("project-name"), formData.get("project-description"));
             renderProjects();
-            dialog.close();
-            dialog.remove();
           }
-        }
+        });
       }
     }
   })
@@ -259,8 +234,7 @@ function initializeEventListeners() {
   //handles the delete project button
   document.addEventListener("click", (event) => {
     if (event.target.matches(".delete-project-btn")) {
-      const projectId = event.target.closest(".project-container").dataset.projectId;
-      const project = projectList.find((p) => p.id === projectId);
+      const project = getProjectFromContainer(event.target);
       if (project && confirm(`Are you sure you want to delete the project ${project.projectName}?`)) {
         deleteProject(project);
         renderProjects();
