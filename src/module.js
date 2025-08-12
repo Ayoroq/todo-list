@@ -168,16 +168,18 @@ class Project {
     addProjectToList(this);
     addProjectToLocalStorage(this);
   }
-
-  edit(newName) {
-    this.projectName = newName || this.projectName;
-    addProjectToLocalStorage(this); // Update localStorage
-  }
 }
 
 // adding task to project
 function addTaskToProject(project, task) {
   project.tasks.push(task);
+  addProjectToLocalStorage(project); // Update localStorage
+}
+
+//function to edit project
+function editProject(project, newName, newDescription) {
+  project.projectName = newName;
+  project.projectDescription = newDescription;
   addProjectToLocalStorage(project); // Update localStorage
 }
 
@@ -294,6 +296,7 @@ export {
   deleteTask,
   deleteProject,
   editTask,
+  editProject,
   addTaskToProject,
   searchTasks,
 };

@@ -6,16 +6,17 @@ import {
   findTaskById,
   deleteTask,
   editTask,
+  editProject,
+  findProjectById,
   getTodayTasks,
   getCompletedTasks,
-  getPendingTasks,
   getOverdueTasks,
   getThisWeeksTasks,
   getHighPriorityTasks,
   searchTasks,
   deleteProject,
 } from "./module.js";
-import { addTaskDialog, addProjectDialog, editTaskDialog } from "./dialog.js";
+import { addTaskDialog, addProjectDialog, editTaskDialog,editProjectDialog } from "./dialog.js";
 import { renderTasks, renderProjects, renderAll, renderProjectTasks, renderTasksByFilter } from "./render.js";
 
 function initializeEventListeners() {
@@ -216,6 +217,41 @@ function initializeEventListeners() {
             projectSelect.value = project.id;
           }
         }, 0);
+      }
+    }
+  })
+
+  //handles the edit project button
+  document.addEventListener("click", (event) => {
+    if (event.target.matches(".edit-project-btn")) {
+      const projectId = event.target.closest(".project-container").dataset.projectId;
+      const project = projectList.find((p) => p.id === projectId);
+      if (project) {
+        editProjectDialog(project);
+      }
+    }
+  })
+
+  //handle save on the edit project
+  document.addEventListener("click", (event) => {
+    if (event.target.matches(".save-edit-project")) {
+      const dialog = event.target.closest("dialog");
+      if (dialog) {
+        const form = dialog.querySelector("form");
+        if (form.checkValidity()) {
+          const formData = new FormData(form);
+          const newName = formData.get("project-name");
+          const newDescription = formData.get("project-description");
+          const projectId = formData.get("project-id");
+
+          const project = findProjectById(projectId);
+          if (project) {
+            editProject(project,newName, newDescription);
+            renderProjects();
+            dialog.close();
+            dialog.remove();
+          }
+        }
       }
     }
   })
