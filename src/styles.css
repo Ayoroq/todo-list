@@ -83,6 +83,19 @@ body {
     cursor: pointer;
 }
 
+.task-filter button:hover,
+.project-btn:hover {
+    font-size: x-large;
+    transition: ease-in-out 0.3s;
+}
+
+.active{
+    font-size: x-large;
+    transition: ease-in-out 0.3s;
+}
+
+
+
 .add-task,
 .add-project {
     font-size: x-large;

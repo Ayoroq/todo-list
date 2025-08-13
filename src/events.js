@@ -181,6 +181,13 @@ function initializeEventListeners() {
       }
     }
 
+    //handling the setting of active for both projects and task filter
+    if (event.target.matches(".project-btn, .task-filter button")) {
+      const buttons = document.querySelectorAll(".project-btn, .task-filter button");
+      buttons.forEach((btn) => btn.classList.remove("active"));
+      event.target.classList.add("active");
+    }
+
     // handles the add task to project button
     if (event.target.matches(".add-task-btn")) {
       const project = getProjectFromContainer(event.target);
@@ -235,7 +242,7 @@ function initializeEventListeners() {
       }
     }
   });
-  
+
   //handling when an item is marked as completed
   document.addEventListener("change", (event) => {
     if (event.target.matches(".task-checkbox")) {
