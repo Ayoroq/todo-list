@@ -1,4 +1,4 @@
-import { taskList, projectList,searchTasks } from "./module.js";
+import { taskList, projectList, searchTasks } from "./module.js";
 
 function renderTasks() {
   const mainContainer = document.querySelector(".main");
@@ -8,7 +8,6 @@ function renderTasks() {
   const header = document.createElement("h2");
   header.textContent = "All Tasks";
   mainContainer.appendChild(header);
-
 
   // Render each task
   if (taskList.length === 0) {
@@ -30,24 +29,20 @@ function createTaskCard(task) {
   taskCard.dataset.taskId = task.id;
   taskCard.innerHTML = `
     <div class="task-header">
-          <input type="checkbox" class="task-checkbox" ${
-            task.taskCompleted ? "checked" : ""
-          }>
-          <h3 class="task-name">${task.taskName}</h3>
-          <div class="task-actions">
-            <button class="edit-btn">&#9998</button>
-            <button class="delete-btn">🗑️</button>
-          </div>
-        </div>
-        <div class="task-body">
-          <p class="task-description">${task.taskDescription}</p>
-          <div class="task-meta">
-            <span class="task-priority priority-${task.taskPriority.toLowerCase()}">${
-    task.taskPriority
-  }</span>
-            <span class="task-due-date">${task.taskDueDate}</span>
-          </div>
-        </div>
+      <input type="checkbox" class="task-checkbox" ${task.taskCompleted ? "checked" : ""}>
+    </div>
+    <div class="task-body">
+      <h3 class="task-name">${task.taskName}</h3>
+      <p class="task-description">${task.taskDescription}</p>
+      <div class="task-meta">
+        <span class="task-priority priority-${task.taskPriority.toLowerCase()}">${task.taskPriority}</span>
+        <span class="task-due-date">${task.taskDueDate}</span>
+      </div>
+    </div>
+    <div class="task-actions">
+      <button class="edit-btn">&#9998</button>
+      <button class="delete-btn">🗑️</button>
+    </div>
   `;
   return taskCard;
 }
@@ -128,4 +123,10 @@ function renderAll() {
   renderProjects();
 }
 
-export { renderTasks, renderProjects, renderAll, renderProjectTasks, renderTasksByFilter };
+export {
+  renderTasks,
+  renderProjects,
+  renderAll,
+  renderProjectTasks,
+  renderTasksByFilter,
+};

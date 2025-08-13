@@ -116,16 +116,14 @@ body {
 
 /* ===== TASK CARDS ===== */
 .task-card {
-    margin-bottom: 1rem;
-    padding: 1rem;
-    border: 1px solid var(--color-border);
+    padding: 0.5rem;
+    border-bottom: 1px solid var(--color-border);
+    display: flex;
+    width: 70%;
 }
 
 .task-header {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 0.75rem;
+    
 }
 
 .task-checkbox {
@@ -155,19 +153,15 @@ body {
     font-size: 1rem;
 }
 
-.edit-btn:hover,
-.delete-btn:hover {
-    background: var(--color-background);
-}
-
 .task-body {
-    padding-left: 2rem;
+    padding: 0 1rem;
+    width: 100%;
 }
 
 .task-description {
     color: var(--color-text-secondary);
-    margin-bottom: 0.75rem;
     line-height: 1.5;
+    margin: 0;
 }
 
 .task-meta {
@@ -178,7 +172,6 @@ body {
 }
 
 .task-priority {
-    padding: 0.25rem 0.5rem;
     border-radius: 12px;
     font-size: 0.75rem;
     font-weight: 500;
@@ -259,7 +252,6 @@ body {
 }
 
 .task-card.completed {
-  background: #f8f9fa;
 }
 
 .hidden {
