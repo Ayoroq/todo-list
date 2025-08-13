@@ -30,6 +30,7 @@ body {
         "header header"
         "side-bar main-content";
     height: 100%;
+    gap: 1rem;
 }
 
 .header {
@@ -48,6 +49,7 @@ body {
     display: flex;
     flex-direction: column;
     grid-area: side-bar;
+    gap: 2rem;
 }
 
 .main {
@@ -55,11 +57,18 @@ body {
 }
 
 /* ===== SIDEBAR COMPONENTS ===== */
-.task-container,
-.project-container {
+.task-container {
     display: flex;
     flex-direction: column;
 }
+
+.project-container{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    white-space: nowrap;
+}
+
 
 .main-task,
 .main-project {
@@ -83,6 +92,10 @@ body {
     cursor: pointer;
 }
 
+.project-btn {
+    word-break: break-word;
+}
+
 .task-filter button:hover,
 .project-btn:hover {
     font-size: x-large;
@@ -94,11 +107,11 @@ body {
     transition: ease-in-out 0.3s;
 }
 
-
-
 .add-task,
 .add-project {
     font-size: x-large;
+    background: none;
+    border: none;
 }
 
 /* ===== TASK CARDS ===== */

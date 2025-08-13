@@ -35,7 +35,7 @@ function createTaskCard(task) {
           }>
           <h3 class="task-name">${task.taskName}</h3>
           <div class="task-actions">
-            <button class="edit-btn">✏️</button>
+            <button class="edit-btn">&#9998</button>
             <button class="delete-btn">🗑️</button>
           </div>
         </div>
@@ -70,8 +70,8 @@ function renderProjects() {
     projectContainer.innerHTML = `
       <button class="project-btn">${project.projectName}</button>
       <div class="project-actions">
-        <button class="add-task-btn">+</button>
-        <button class="edit-project-btn">✏️</button>
+        <button class="add-task-btn">&#x2b</button>
+        <button class="edit-project-btn">&#9998</button>
         <button class="delete-project-btn">🗑️</button>
       </div>
     `;
