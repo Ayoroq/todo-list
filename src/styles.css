@@ -117,9 +117,12 @@ body {
 /* ===== TASK CARDS ===== */
 .task-card {
     padding: 0.5rem;
-    border-bottom: 1px solid var(--color-border);
     display: flex;
     width: 70%;
+}
+
+.task-card:not(:last-child){
+    border-bottom: 1px solid var(--color-border);
 }
 
 .task-header {
