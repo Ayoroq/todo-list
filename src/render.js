@@ -1,13 +1,17 @@
 import { taskList, projectList, searchTasks } from "./module.js";
 
-function renderTasks() {
-  const mainContainer = document.querySelector(".main");
+// DOM elements
+const mainContainer = document.querySelector(".main");
+const header = document.querySelector(".header");
+const projectFilter = document.querySelector(".project-filter");
 
+function renderTasks() {
   // Clear existing content
   mainContainer.innerHTML = "";
-  const header = document.createElement("h2");
-  header.textContent = "All Tasks";
-  mainContainer.appendChild(header);
+  header.innerHTML = "";
+  const headerText = document.createElement("h2");
+  headerText.textContent = "All Tasks";
+  header.appendChild(headerText);
 
   // Render each task
   if (taskList.length === 0) {
@@ -29,13 +33,17 @@ function createTaskCard(task) {
   taskCard.dataset.taskId = task.id;
   taskCard.innerHTML = `
     <div class="task-header">
-      <input type="checkbox" class="task-checkbox" ${task.taskCompleted ? "checked" : ""}>
+      <input type="checkbox" class="task-checkbox" ${
+        task.taskCompleted ? "checked" : ""
+      }>
     </div>
     <div class="task-body">
       <h3 class="task-name">${task.taskName}</h3>
       <p class="task-description">${task.taskDescription}</p>
       <div class="task-meta">
-        <span class="task-priority priority-${task.taskPriority.toLowerCase()}">${task.taskPriority}</span>
+        <span class="task-priority priority-${task.taskPriority.toLowerCase()}">${
+    task.taskPriority
+  }</span>
         <span class="task-due-date">${task.taskDueDate}</span>
       </div>
     </div>
@@ -48,7 +56,6 @@ function createTaskCard(task) {
 }
 
 function renderProjects() {
-  const projectFilter = document.querySelector(".project-filter");
   projectFilter.innerHTML = "";
 
   // Add each project as a button and also as an option in the add task form
@@ -75,8 +82,6 @@ function renderProjects() {
 }
 
 function renderProjectTasks(project) {
-  const mainContainer = document.querySelector(".main");
-
   // Clear existing content
   mainContainer.innerHTML = "";
   const ProjectName = document.createElement("h2");
@@ -97,13 +102,12 @@ function renderProjectTasks(project) {
 }
 
 function renderTasksByFilter(filter, tasks) {
-  const mainContainer = document.querySelector(".main");
-
   // Clear existing content
   mainContainer.innerHTML = "";
-  const header = document.createElement("h2");
-  header.textContent = `${filter} Tasks`;
-  mainContainer.appendChild(header);
+  header.innerHTML = "";
+  const headerText = document.createElement("h2");
+  headerText.textContent = `${filter} Tasks`;
+  header.appendChild(headerText);
 
   // Render each task
   if (tasks.length === 0) {

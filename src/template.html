@@ -7,9 +7,11 @@
   </head>
   <body>
     <div id="content" class="content">
-      <header class="header" role="banner">
-        <div class="logo">
-          <h1>Doings</h1>
+      <nav class="nav">
+        <div class="logo-container">
+          <div class="logo">
+            <h1>Doings</h1>
+          </div>
         </div>
         <div class="search-container">
           <label for="search-input" class="visually-hidden">Search tasks</label>
@@ -23,13 +25,17 @@
             autocomplete="off"
           />
         </div>
+      </nav>
+      <header class="header" role="banner">
       </header>
       <section class="side-bar">
         <div class="task">
           <div class="task-container">
             <div class="main-task">
               <p class="title">TASK</p>
-              <button class="add-task"><img src="/assets/plus.svg" alt="Image of plus sign"></button>
+              <button class="add-task">
+                <img src="/assets/plus.svg" alt="Image of plus sign" />
+              </button>
             </div>
             <div class="task-filter">
               <button data-filter="all" class="active">All</button>
@@ -45,15 +51,15 @@
           <div class="main-project-container">
             <div class="main-project">
               <p class="title">PROJECTS</p>
-              <button class="add-project"><img src="/assets/folder.svg" alt="image of a folder"></button>
+              <button class="add-project">
+                <img src="/assets/folder.svg" alt="image of a folder" />
+              </button>
             </div>
-            <div class="project-filter">
-            </div>
+            <div class="project-filter"></div>
           </div>
         </div>
       </section>
-      <main id="main" class="main">
-      </main>
+      <main id="main" class="main"></main>
     </div>
   </body>
 </html>
