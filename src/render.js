@@ -84,9 +84,10 @@ function renderProjects() {
 function renderProjectTasks(project) {
   // Clear existing content
   mainContainer.innerHTML = "";
+  header.innerHTML = "";
   const ProjectName = document.createElement("h2");
   ProjectName.textContent = project.projectName;
-  mainContainer.appendChild(ProjectName);
+  header.appendChild(ProjectName);
 
   // Render each task
   if (project.tasks.length === 0) {
