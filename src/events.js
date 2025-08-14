@@ -59,12 +59,12 @@ function initializeEventListeners() {
   // Event delegation for dynamically created elements
   document.addEventListener("click", (event) => {
     // Handle add task button clicks
-    if (event.target.matches(".add-task")) {
+    if (event.target.closest(".add-task")) {
       addTaskDialog();
     }
 
     // Handle add project button clicks
-    if (event.target.matches(".add-project")) {
+    if (event.target.closest(".add-project")) {
       addProjectDialog();
     }
 
