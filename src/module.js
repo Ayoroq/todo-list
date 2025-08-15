@@ -302,31 +302,9 @@ function openDB() {
       db = event.target.result;
       if (!db.objectStoreNames.contains("tasks")) {
         const objectStore = db.createObjectStore("tasks", { keyPath: "id" });
-        objectStore.createIndex("taskName", "taskName", { unique: false });
-        objectStore.createIndex("taskDescription", "taskDescription", {
-          unique: false,
-        });
-        objectStore.createIndex("taskDueDate", "taskDueDate", {
-          unique: false,
-        });
-        objectStore.createIndex("taskPriority", "taskPriority", {
-          unique: false,
-        });
-        objectStore.createIndex("taskCompleted", "taskCompleted", {
-          unique: false,
-        });
-        objectStore.createIndex("taskProject", "taskProject", {
-          unique: false,
-        });
       }
       if (!db.objectStoreNames.contains("projects")) {
         const objectStore = db.createObjectStore("projects", { keyPath: "id" });
-        objectStore.createIndex("projectName", "projectName", {
-          unique: false,
-        });
-        objectStore.createIndex("projectDescription", "projectDescription", {
-          unique: false,
-        });
       }
     };
   });
