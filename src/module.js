@@ -24,9 +24,9 @@ class Task {
     this.taskCompleted = taskCompleted;
     this.taskProject = taskProject;
 
-    // Automatically add to task list and localStorage
+    // Automatically add to task list and database
     addTaskToList(this);
-    addTaskToLocalStorage(this);
+    createItemDb("tasks", this)
 
     if (this.taskProject) {
       const project = findProjectById(this.taskProject);
@@ -43,14 +43,7 @@ function addTaskToList(task) {
   taskList.push(task);
 }
 
-// add task to local storage
-function addTaskToLocalStorage(task) {
-  try {
-    localStorage.setItem(task.id, JSON.stringify(task));
-  } catch (error) {
-    console.error("Failed to save task to localStorage:", error);
-  }
-}
+
 
 function deleteTask(task) {
   if (task.taskProject) {
@@ -60,11 +53,7 @@ function deleteTask(task) {
     }
   }
   taskList.splice(taskList.indexOf(task), 1);
-  try {
-    localStorage.removeItem(task.id);
-  } catch (error) {
-    console.error("Failed to remove task from localStorage:", error);
-  }
+  deleteItemDb("tasks", task.id);
 }
 
 function editTask(
@@ -99,7 +88,14 @@ function editTask(
   task.taskPriority = newPriority;
   task.taskCompleted = newCompleted;
   task.taskProject = newProject;
-  addTaskToLocalStorage(task); // Update localStorage
+  if (task.taskProject) {
+    const project = findProjectById(task.taskProject);
+    if (project) {
+      deleteTaskFromProject(project, task);
+      addTaskToProject(project, task);
+    }
+  }
+  editItemDb("tasks", task); // Update database
 }
 
 // Find functions
@@ -166,23 +162,23 @@ class Project {
     this.id = crypto.randomUUID();
     this.creationDate = new Date();
 
-    // Automatically add to project list and localStorage
+    // Automatically add to project list and database
     addProjectToList(this);
-    addProjectToLocalStorage(this);
+    createItemDb("projects", this)
   }
 }
 
 // adding task to project
 function addTaskToProject(project, task) {
   project.tasks.push(task);
-  addProjectToLocalStorage(project); // Update localStorage
+  editItemDb("projects", project); // Update database
 }
 
 //function to edit project
 function editProject(project, newName, newDescription) {
   project.projectName = newName;
   project.projectDescription = newDescription;
-  addProjectToLocalStorage(project); // Update localStorage
+  editItemDb("projects", project); // Update database
 }
 
 //function to delete project
@@ -191,12 +187,12 @@ function deleteProject(project) {
   if (project.tasks.length > 0) {
     project.tasks.forEach((task) => {
       task.taskProject = null;
-      addTaskToLocalStorage(task);
+      editItemDb("tasks", task);
     });
   }
 
   removeProjectFromList(project);
-  removeProjectFromLocalStorage(project);
+  deleteItemDb("projects", project.id);
 }
 
 // Helper functions for project management
@@ -207,79 +203,18 @@ function addProjectToList(project) {
 // delete a task from a project
 function deleteTaskFromProject(project, task) {
   project.tasks.splice(project.tasks.indexOf(task), 1);
-  addProjectToLocalStorage(project); // Update localStorage
+  editItemDb("projects", project); // Update database
 }
 
 function removeProjectFromList(project) {
   projectList.splice(projectList.indexOf(project), 1);
 }
 
-function addProjectToLocalStorage(project) {
-  try {
-    localStorage.setItem(project.id, JSON.stringify(project));
-  } catch (error) {
-    console.error("Failed to save project to localStorage:", error);
-  }
-}
-
-function removeProjectFromLocalStorage(project) {
-  try {
-    localStorage.removeItem(project.id);
-  } catch (error) {
-    console.error("Failed to remove project from localStorage:", error);
-  }
-}
-
 function findProjectById(id) {
   return projectList.find((project) => project.id === id);
 }
 
-function loadFromLocalStorage() {
-  try {
-    // First, load all items and separate tasks and projects
-    const tasks = [];
-    const projects = [];
 
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      const itemString = localStorage.getItem(key);
-
-      if (itemString) {
-        try {
-          const item = JSON.parse(itemString);
-
-          if (item.taskName) {
-            tasks.push(item);
-          } else if (item.projectName) {
-            // Reset tasks array for projects loaded from localStorage
-            item.tasks = [];
-            projects.push(item);
-          }
-        } catch (parseError) {
-          console.error(`Failed to parse item with key ${key}:`, parseError);
-        }
-      }
-    }
-
-    // Add projects to projectList first
-    projects.forEach((project) => projectList.push(project));
-
-    // Add tasks to taskList and rebuild project relationships
-    tasks.forEach((task) => {
-      taskList.push(task);
-
-      // Rebuild task-project relationships
-      if (task.taskProject) {
-        const project = findProjectById(task.taskProject);
-        if (project) {
-          project.tasks.push(task);
-        }
-      }
-    });
-  } catch (error) {
-    console.error("Failed to load from localStorage:", error);
-  }
-}
 
 // Let us open our database
 let db;
@@ -390,6 +325,41 @@ function closeDB() {
   }
 }
 
+async function loadFromIndexDB(){
+ try {
+  const tasks = await getAllItemsDb("tasks");
+  const projects = await getAllItemsDb("projects");
+
+  // Add projects to projectList first
+    projects.forEach((project) => projectList.push(project));
+
+    // Add tasks to taskList and rebuild project relationships
+    tasks.forEach((task) => {
+      taskList.push(task);
+
+      // // Rebuild task-project relationships
+      // if (task.taskProject) {
+      //   const project = findProjectById(task.taskProject);
+      //   if (project) {
+      //     project.tasks.push(task);
+      //   }
+      // }
+    });
+
+ } catch (error) {
+  console.error("Failed to load from indexDB:", error);
+ }
+}
+
+async function initializeDB() {
+  try {
+    await openDB();
+    console.log("Database opened successfully");
+  } catch (error) {
+    console.error("Failed to open database:", error);
+  }
+}
+
 export {
   Task,
   Project,
@@ -403,7 +373,8 @@ export {
   getOverdueTasks,
   getThisWeeksTasks,
   getHighPriorityTasks,
-  loadFromLocalStorage,
+  loadFromIndexDB,
+  initializeDB,
   deleteTask,
   deleteProject,
   editTask,

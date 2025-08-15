@@ -130,6 +130,17 @@ function initializeEventListeners() {
       }
     }
 
+    const filterMap = {
+      all: () => renderAll(),
+      today: () => renderTasksByFilter("Today's", getTodayTasks()),
+      completed: () => renderTasksByFilter("Completed", getCompletedTasks()),
+      overdue: () => renderTasksByFilter("Overdue", getOverdueTasks()),
+      "this-week": () =>
+        renderTasksByFilter("This Week's", getThisWeeksTasks()),
+      "high-priority": () =>
+        renderTasksByFilter("High Priority", getHighPriorityTasks()),
+    };
+
     // handles save on edit task
     if (event.target.matches(".save-edit-task")) {
       const dialog = event.target.closest("dialog");
@@ -146,7 +157,22 @@ function initializeEventListeners() {
               formData.get("task-completed") === "on",
               formData.get("task-project")
             );
-            renderTasks();
+          }
+          const active = document.querySelector(".active");
+          // Then check if it's a task filter or project button
+          const isTaskFilter = active?.closest(".task-filter");
+          const isProject = active?.classList.contains("project-btn");
+          if (isTaskFilter) {
+            const filterType = active.getAttribute("data-filter");
+            if (filterMap[filterType]) {
+              filterMap[filterType]();
+            }
+          }
+          if (isProject) {
+            const project = getProjectFromContainer(active);
+            if (project) {
+              renderProjectTasks(project);
+            }
           }
         });
       }
@@ -156,17 +182,6 @@ function initializeEventListeners() {
 
     if (event.target.matches(".task-filter button")) {
       const filterType = event.target.getAttribute("data-filter");
-
-      const filterMap = {
-        all: () => renderAll(),
-        today: () => renderTasksByFilter("Today's", getTodayTasks()),
-        completed: () => renderTasksByFilter("Completed", getCompletedTasks()),
-        overdue: () => renderTasksByFilter("Overdue", getOverdueTasks()),
-        "this-week": () =>
-          renderTasksByFilter("This Week's", getThisWeeksTasks()),
-        "high-priority": () =>
-          renderTasksByFilter("High Priority", getHighPriorityTasks()),
-      };
 
       if (filterMap[filterType]) {
         filterMap[filterType]();
@@ -183,7 +198,9 @@ function initializeEventListeners() {
 
     //handling the setting of active for both projects and task filter
     if (event.target.matches(".project-btn, .task-filter button")) {
-      const buttons = document.querySelectorAll(".project-btn, .task-filter button");
+      const buttons = document.querySelectorAll(
+        ".project-btn, .task-filter button"
+      );
       buttons.forEach((btn) => btn.classList.remove("active"));
       event.target.classList.add("active");
     }
