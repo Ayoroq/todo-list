@@ -31,9 +31,10 @@ A modern, feature-rich todo list application built with vanilla JavaScript, feat
 - **Unified Navigation**: Seamless switching between filters and projects
 
 ### Data Persistence
-- **Local Storage**: Automatic saving of all tasks and projects
-- **Relationship Management**: Maintains task-project associations
-- **Error Handling**: Robust localStorage operations with fallback handling
+- **IndexedDB Storage**: Modern browser database for structured data storage
+- **Asynchronous Operations**: Non-blocking database operations with Promise-based API
+- **Relationship Management**: Maintains task-project associations with proper data integrity
+- **Error Handling**: Robust database operations with graceful fallback handling
 
 ## Architecture
 
@@ -51,13 +52,14 @@ The application follows a clean separation of concerns with dedicated modules:
 - **Factory Pattern**: Task and Project class constructors
 - **Observer Pattern**: Automatic UI updates on data changes
 - **Module Pattern**: Clean imports/exports with ES6 modules
+- **Promise-based Storage**: Asynchronous IndexedDB operations with proper error handling
 
 ## 🛠️ Technical Stack
 
 - **Frontend**: Vanilla JavaScript (ES6+)
 - **Styling**: Modern CSS with Grid and Flexbox
 - **Build Tool**: Webpack 5 with development and production configs
-- **Storage**: Browser localStorage API
+- **Storage**: IndexedDB API for structured client-side storage
 - **Icons**: SVG assets
 
 ## Installation & Setup
@@ -144,8 +146,9 @@ The application will open at `http://localhost:8080`
 
 ### Browser Support
 - Modern browsers with ES6+ support
-- localStorage API support required
+- IndexedDB API support required
 - CSS Grid and Flexbox support
+- Promise/async-await support
 
 ## Project Status
 
@@ -156,10 +159,11 @@ The application will open at `http://localhost:8080`
 ✅ Project management  
 ✅ Advanced filtering system  
 ✅ Real-time search  
-✅ Local storage persistence  
+✅ IndexedDB persistence with async operations
 ✅ Responsive design  
 ✅ Form validation  
-✅ Error handling  
+✅ Comprehensive error handling
+✅ Database initialization and migration  
 
 ### Future Enhancements
 - Drag & drop task reordering
