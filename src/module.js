@@ -1,6 +1,8 @@
 const projectList = [];
 const taskList = [];
 const today = new Date();
+const dbName = "ToDoDatabase";
+const dbVersion = 3;
 const formattedDate = today.toISOString().slice(0, 10);
 
 // class to create a task
@@ -192,7 +194,7 @@ function deleteProject(project) {
       addTaskToLocalStorage(task);
     });
   }
-  
+
   removeProjectFromList(project);
   removeProjectFromLocalStorage(project);
 }
@@ -276,6 +278,137 @@ function loadFromLocalStorage() {
     });
   } catch (error) {
     console.error("Failed to load from localStorage:", error);
+  }
+}
+
+// Let us open our database
+let db;
+
+function openDB() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(dbName, dbVersion);
+
+    request.onsuccess = (event) => {
+      db = event.target.result;
+      resolve(db);
+    };
+
+    request.onerror = (event) => {
+      console.error("Error opening database:", event.target.error);
+      reject(event.target.error);
+    };
+
+    request.onupgradeneeded = function (event) {
+      db = event.target.result;
+      if (!db.objectStoreNames.contains("tasks")) {
+        const objectStore = db.createObjectStore("tasks", { keyPath: "id" });
+        objectStore.createIndex("taskName", "taskName", { unique: false });
+        objectStore.createIndex("taskDescription", "taskDescription", {
+          unique: false,
+        });
+        objectStore.createIndex("taskDueDate", "taskDueDate", {
+          unique: false,
+        });
+        objectStore.createIndex("taskPriority", "taskPriority", {
+          unique: false,
+        });
+        objectStore.createIndex("taskCompleted", "taskCompleted", {
+          unique: false,
+        });
+        objectStore.createIndex("taskProject", "taskProject", {
+          unique: false,
+        });
+      }
+      if (!db.objectStoreNames.contains("projects")) {
+        const objectStore = db.createObjectStore("projects", { keyPath: "id" });
+        objectStore.createIndex("projectName", "projectName", {
+          unique: false,
+        });
+        objectStore.createIndex("projectDescription", "projectDescription", {
+          unique: false,
+        });
+      }
+    };
+  });
+}
+
+//createItem in the db
+function createItemDb(storeName, item) {
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(storeName, "readwrite");
+    const objectStore = transaction.objectStore(storeName);
+    const request = objectStore.add(item);
+
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+//get item in the db
+function getItemDb(storeName, id) {
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(storeName, "readonly");
+    const objectStore = transaction.objectStore(storeName);
+    const request = objectStore.get(id);
+
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+//edit item in the db
+function editItemDb(storeName, item) {
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(storeName, "readwrite");
+    const objectStore = transaction.objectStore(storeName);
+    const request = objectStore.put(item);
+
+    request.onsuccess = () => resolve();
+    request.onerror = () => reject(request.error);
+  });
+}
+
+//delete item in the db
+function deleteItemDb(storeName, id) {
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(storeName, "readwrite");
+    const objectStore = transaction.objectStore(storeName);
+    const request = objectStore.delete(id);
+
+    request.onsuccess = () => resolve();
+    request.onerror = () => reject(request.error);
+  });
+}
+
+//get all items in the db
+function getAllItemsDb(storeName) {
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(storeName, "readonly");
+    const objectStore = transaction.objectStore(storeName);
+    const request = objectStore.getAll();
+
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+//clear all items in the db
+function clearAllItemsDb(storeName) {
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(storeName, "readwrite");
+    const objectStore = transaction.objectStore(storeName);
+    const request = objectStore.clear();
+
+    request.onsuccess = () => resolve();
+    request.onerror = () => reject(request.error);
+  });
+}
+
+//close the database
+function closeDB() {
+  if (db) {
+    db.close();
+    console.log("Database closed");
   }
 }
 
