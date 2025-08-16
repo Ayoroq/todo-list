@@ -53,12 +53,7 @@ function deleteTask(task) {
   if (index > -1) {
     taskList.splice(index, 1);
   }
-  deleteItemDb("tasks", task.id).catch((error) =>
-    console.error(
-      "Failed to delete task from database:",
-      escapeHtml(String(error?.message || "Unknown error"))
-    )
-  );
+  deleteItemDb("tasks", task.id).catch((error) => console.error("Failed to delete task from database:", error));
 }
 
 function editTask(
@@ -93,12 +88,7 @@ function editTask(
   task.taskPriority = newPriority;
   task.taskCompleted = newCompleted;
   task.taskProject = newProject;
-  editItemDb("tasks", task).catch((error) =>
-    console.error(
-      "Failed to update task in database:",
-      escapeHtml(String(error?.message || "Unknown error"))
-    )
-  );
+  editItemDb("tasks", task).catch((error) => console.error("Failed to update task in database:", error));
 }
 
 // Find functions
@@ -175,24 +165,14 @@ class Project {
 // adding task to project
 function addTaskToProject(project, task) {
   project.tasks.push(task);
-  editItemDb("projects", project).catch((error) =>
-    console.error(
-      "Failed to update project in database:",
-      escapeHtml(String(error?.message || "Unknown error"))
-    )
-  );
+  editItemDb("projects", project).catch((error) => console.error("Failed to update project in database:", error));
 }
 
 //function to edit project
 function editProject(project, newName, newDescription) {
   project.projectName = validateInput(newName, 100);
   project.projectDescription = validateInput(newDescription, 500);
-  editItemDb("projects", project).catch((error) =>
-    console.error(
-      "Failed to update project in database:",
-      escapeHtml(String(error?.message || "Unknown error"))
-    )
-  );
+  editItemDb("projects", project).catch((error) => console.error("Failed to update project in database:", error));
 }
 
 //function to delete project
@@ -202,23 +182,13 @@ async function deleteProject(project) {
     await Promise.all(
       project.tasks.map((task) => {
         task.taskProject = null;
-        return editItemDb("tasks", task).catch((error) =>
-          console.error(
-            "Failed to update task in database:",
-            escapeHtml(String(error?.message || "Unknown error"))
-          )
-        );
+        return editItemDb("tasks", task).catch((error) => console.error("Failed to update task in database:", error));
       })
     );
   }
 
   removeProjectFromList(project);
-  deleteItemDb("projects", project.id).catch((error) =>
-    console.error(
-      "Failed to delete project from database:",
-      escapeHtml(String(error?.message || "Unknown error"))
-    )
-  );
+  deleteItemDb("projects", project.id).catch((error) => console.error("Failed to delete project from database:", error));
 }
 
 // Helper functions for project management
@@ -232,12 +202,7 @@ function deleteTaskFromProject(project, task) {
   if (index > -1) {
     project.tasks.splice(index, 1);
   }
-  editItemDb("projects", project).catch((error) =>
-    console.error(
-      "Failed to update project in database:",
-      escapeHtml(String(error?.message || "Unknown error"))
-    )
-  );
+  editItemDb("projects", project).catch((error) => console.error("Failed to update project in database:", error));
 }
 
 function removeProjectFromList(project) {
@@ -264,10 +229,7 @@ function openDB() {
     };
 
     request.onerror = (event) => {
-      console.error(
-        "Error opening database:",
-        escapeHtml(String(event.target.error?.message || "Unknown database error"))
-      );
+      console.error("Error opening database:", event.target.error);
       reject(event.target.error);
     };
 
@@ -342,12 +304,10 @@ async function loadFromIndexDB() {
     // Add tasks to taskList
     tasks.forEach((task) => {
       taskList.push(task);
+
     });
   } catch (error) {
-    console.error(
-      "Failed to load from indexDB:",
-      escapeHtml(String(error?.message || "Unknown error"))
-    );
+    console.error("Failed to load from indexDB:", error);
   }
 }
 
@@ -396,10 +356,7 @@ async function initializeDB() {
     console.info("Database opened successfully");
     return true;
   } catch (error) {
-    console.error(
-      "Failed to open database:",
-      escapeHtml(String(error?.message || "Unknown error"))
-    );
+    console.error("Failed to open database:", error);
     return false;
   }
 }
