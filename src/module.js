@@ -233,7 +233,7 @@ function openDB() {
     };
 
     request.onerror = (event) => {
-      console.error("Error opening database:", event.target.error);
+      console.error("Error opening database:", String(event.target.error));
       reject(event.target.error);
     };
 
@@ -342,7 +342,7 @@ async function loadFromIndexDB() {
       taskList.push(task);
     });
   } catch (error) {
-    console.error("Failed to load from indexDB:", error);
+    console.error("Failed to load from indexDB:", String(error));
   }
 }
 
@@ -351,7 +351,7 @@ async function initializeDB() {
     await openDB();
     console.log("Database opened successfully");
   } catch (error) {
-    console.error("Failed to open database:", error);
+    console.error("Failed to open database:", String(error));
   }
 }
 

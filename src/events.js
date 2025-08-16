@@ -38,17 +38,28 @@ function closeDialog(dialog) {
 }
 
 function processForm(dialog, callback) {
-  const form = dialog.querySelector("form");
-  if (form.checkValidity()) {
-    const formData = new FormData(form);
-    callback(formData);
-    closeDialog(dialog);
+  try {
+    const form = dialog.querySelector("form");
+    if (form && form.checkValidity()) {
+      const formData = new FormData(form);
+      callback(formData);
+      closeDialog(dialog);
+    }
+  } catch (error) {
+    console.error("Error processing form:", error.message);
   }
 }
 
 function getProjectFromContainer(element) {
-  const projectId = element.closest(".project-container").dataset.projectId;
-  return projectList.find((p) => p.id === projectId);
+  try {
+    const container = element.closest(".project-container");
+    if (!container || !container.dataset.projectId) return null;
+    const projectId = container.dataset.projectId;
+    return projectList.find((p) => p.id === projectId);
+  } catch (error) {
+    console.error("Error getting project from container:", error.message);
+    return null;
+  }
 }
 
 const filterMap = {

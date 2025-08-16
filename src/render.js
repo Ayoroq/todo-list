@@ -8,8 +8,8 @@ const projectFilter = document.querySelector(".project-filter");
 
 function renderTasks() {
   // Clear existing content
-  mainContainer.innerHTML = "";
-  header.innerHTML = "";
+  mainContainer.textContent = "";
+  header.textContent = "";
   const headerText = document.createElement("h2");
   headerText.textContent = "All Tasks";
   header.appendChild(headerText);
@@ -32,32 +32,69 @@ function createTaskCard(task) {
   taskCard.className = "task-card";
   taskCard.classList.toggle("completed", task.taskCompleted);
   taskCard.dataset.taskId = task.id;
-  taskCard.innerHTML = `
-    <div class="task-header">
-      <input type="checkbox" class="task-checkbox" ${
-        task.taskCompleted ? "checked" : ""
-      }>
-    </div>
-    <div class="task-body">
-      <h3 class="task-name">${escapeHtml(task.taskName)}</h3>
-      <p class="task-description">${escapeHtml(task.taskDescription)}</p>
-      <div class="task-meta">
-        <span class="task-priority priority-${escapeHtml(task.taskPriority?.toLowerCase())}">${escapeHtml(
-    task.taskPriority
-  )}</span>
-        <span class="task-due-date">${escapeHtml(task.taskDueDate)}</span>
-      </div>
-    </div>
-    <div class="task-actions">
-      <button class="edit-btn">&#9998</button>
-      <button class="delete-btn">🗑️</button>
-    </div>
-  `;
+  
+  // Create task header
+  const taskHeader = document.createElement("div");
+  taskHeader.className = "task-header";
+  const checkbox = document.createElement("input");
+  checkbox.type = "checkbox";
+  checkbox.className = "task-checkbox";
+  checkbox.checked = task.taskCompleted;
+  taskHeader.appendChild(checkbox);
+  
+  // Create task body
+  const taskBody = document.createElement("div");
+  taskBody.className = "task-body";
+  
+  const taskName = document.createElement("h3");
+  taskName.className = "task-name";
+  taskName.textContent = task.taskName;
+  
+  const taskDescription = document.createElement("p");
+  taskDescription.className = "task-description";
+  taskDescription.textContent = task.taskDescription;
+  
+  const taskMeta = document.createElement("div");
+  taskMeta.className = "task-meta";
+  
+  const priority = document.createElement("span");
+  priority.className = `task-priority priority-${task.taskPriority?.toLowerCase()}`;
+  priority.textContent = task.taskPriority;
+  
+  const dueDate = document.createElement("span");
+  dueDate.className = "task-due-date";
+  dueDate.textContent = task.taskDueDate;
+  
+  taskMeta.appendChild(priority);
+  taskMeta.appendChild(dueDate);
+  taskBody.appendChild(taskName);
+  taskBody.appendChild(taskDescription);
+  taskBody.appendChild(taskMeta);
+  
+  // Create task actions
+  const taskActions = document.createElement("div");
+  taskActions.className = "task-actions";
+  
+  const editBtn = document.createElement("button");
+  editBtn.className = "edit-btn";
+  editBtn.innerHTML = "&#9998";
+  
+  const deleteBtn = document.createElement("button");
+  deleteBtn.className = "delete-btn";
+  deleteBtn.textContent = "🗑️";
+  
+  taskActions.appendChild(editBtn);
+  taskActions.appendChild(deleteBtn);
+  
+  taskCard.appendChild(taskHeader);
+  taskCard.appendChild(taskBody);
+  taskCard.appendChild(taskActions);
+  
   return taskCard;
 }
 
 function renderProjects() {
-  projectFilter.innerHTML = "";
+  projectFilter.textContent = "";
 
   // Add each project as a button and also as an option in the add task form
   if (projectList.length === 0) {
@@ -70,22 +107,41 @@ function renderProjects() {
     const projectContainer = document.createElement("div");
     projectContainer.className = "project-container";
     projectContainer.dataset.projectId = project.id;
-    projectContainer.innerHTML = `
-      <button class="project-btn">${escapeHtml(project.projectName)}</button>
-      <div class="project-actions">
-        <button class="add-task-btn">&#x2b</button>
-        <button class="edit-project-btn">&#9998</button>
-        <button class="delete-project-btn">🗑️</button>
-      </div>
-    `;
+    
+    const projectBtn = document.createElement("button");
+    projectBtn.className = "project-btn";
+    projectBtn.textContent = project.projectName;
+    
+    const projectActions = document.createElement("div");
+    projectActions.className = "project-actions";
+    
+    const addTaskBtn = document.createElement("button");
+    addTaskBtn.className = "add-task-btn";
+    addTaskBtn.innerHTML = "&#x2b";
+    
+    const editProjectBtn = document.createElement("button");
+    editProjectBtn.className = "edit-project-btn";
+    editProjectBtn.innerHTML = "&#9998";
+    
+    const deleteProjectBtn = document.createElement("button");
+    deleteProjectBtn.className = "delete-project-btn";
+    deleteProjectBtn.textContent = "🗑️";
+    
+    projectActions.appendChild(addTaskBtn);
+    projectActions.appendChild(editProjectBtn);
+    projectActions.appendChild(deleteProjectBtn);
+    
+    projectContainer.appendChild(projectBtn);
+    projectContainer.appendChild(projectActions);
+    
     projectFilter.appendChild(projectContainer);
   });
 }
 
 function renderProjectTasks(project) {
   // Clear existing content
-  mainContainer.innerHTML = "";
-  header.innerHTML = "";
+  mainContainer.textContent = "";
+  header.textContent = "";
   const projectName = document.createElement("h2");
   projectName.textContent = project.projectName;
   header.appendChild(projectName);
@@ -105,8 +161,8 @@ function renderProjectTasks(project) {
 
 function renderTasksByFilter(filter, tasks) {
   // Clear existing content
-  mainContainer.innerHTML = "";
-  header.innerHTML = "";
+  mainContainer.textContent = "";
+  header.textContent = "";
   const headerText = document.createElement("h2");
   headerText.textContent = `${escapeHtml(filter)} Tasks`;
   header.appendChild(headerText);

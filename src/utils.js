@@ -1,9 +1,15 @@
-// HTML sanitization utility
+// HTML sanitization utility with performance optimization
+const escapeMap = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&#x27;'
+};
+
 function escapeHtml(text) {
   if (text == null) return '';
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
+  return String(text).replace(/[&<>"']/g, (match) => escapeMap[match]);
 }
 
 export { escapeHtml };

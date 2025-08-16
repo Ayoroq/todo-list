@@ -20,26 +20,17 @@ import {
 import { initializeEventListeners } from "./events.js";
 import { renderAll } from "./render.js";
 
-//loadFromLocalStorage();
-
 async function initialize() {
   try {
     await initializeDB();
     await loadFromIndexDB();
-    // render initial content
     renderAll();
-    console.log(projectList)
-    console.log(taskList)
+    initializeEventListeners();
   } catch (error) {
-    console.error("Failed to initialize application:", error);
-    // Fallback: render with empty data
+    console.error("Failed to initialize application:", error?.message || "Unknown error");
     renderAll();
+    initializeEventListeners();
   }
 }
 
-initialize().catch(error => {
-  console.error("Initialization failed:", error);
-});
-
-// Initialize event listeners
-initializeEventListeners();
+initialize();
