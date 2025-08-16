@@ -2,10 +2,12 @@ import { escapeHtml } from "./utils.js";
 
 const projectList = [];
 const taskList = [];
-const today = new Date();
 const dbName = "ToDoDatabase";
 const dbVersion = 3;
-const formattedDate = today.toISOString().slice(0, 10);
+
+function getTodayFormatted() {
+  return new Date().toISOString().slice(0, 10);
+}
 
 // Input validation function
 function validateInput(input, maxLength = 1000) {
@@ -58,7 +60,10 @@ function deleteTask(task) {
       deleteTaskFromProject(project, task);
     }
   }
-  taskList.splice(taskList.indexOf(task), 1);
+  const index = taskList.indexOf(task);
+  if (index > -1) {
+    taskList.splice(index, 1);
+  }
   deleteItemDb("tasks", task.id);
 }
 
@@ -94,13 +99,6 @@ function editTask(
   task.taskPriority = newPriority;
   task.taskCompleted = newCompleted;
   task.taskProject = newProject;
-  if (task.taskProject) {
-    const project = findProjectById(task.taskProject);
-    if (project) {
-      deleteTaskFromProject(project, task);
-      addTaskToProject(project, task);
-    }
-  }
   editItemDb("tasks", task); // Update database
 }
 
@@ -118,30 +116,34 @@ function getPendingTasks() {
 }
 
 function getTodayTasks() {
+  const todayFormatted = getTodayFormatted();
   return taskList.filter((task) => {
-    return task.taskDueDate && task.taskDueDate === formattedDate;
+    return task.taskDueDate && task.taskDueDate === todayFormatted;
   });
 }
 
 function getOverdueTasks() {
+  const todayFormatted = getTodayFormatted();
   return taskList.filter((task) => {
     return (
-      task.taskDueDate < formattedDate &&
       task.taskDueDate &&
-      task.taskCompleted === false
+      task.taskDueDate < todayFormatted &&
+      !task.taskCompleted
     );
   });
 }
 
 function getThisWeeksTasks() {
+  const today = new Date();
   const nextWeek = new Date(today);
   nextWeek.setDate(today.getDate() + 7);
+  const todayFormatted = today.toISOString().slice(0, 10);
   const nextWeekFormatted = nextWeek.toISOString().slice(0, 10);
 
   return taskList.filter((task) => {
     return (
       task.taskDueDate &&
-      task.taskDueDate >= formattedDate &&
+      task.taskDueDate >= todayFormatted &&
       task.taskDueDate <= nextWeekFormatted
     );
   });
@@ -154,8 +156,8 @@ function getHighPriorityTasks() {
 function searchTasks(query) {
   return taskList.filter(
     (task) =>
-      task.taskName.toLowerCase().includes(query.toLowerCase()) ||
-      task.taskDescription.toLowerCase().includes(query.toLowerCase())
+      task.taskName?.toLowerCase().includes(query.toLowerCase()) ||
+      task.taskDescription?.toLowerCase().includes(query.toLowerCase())
   );
 }
 
@@ -170,7 +172,9 @@ class Project {
 
     // Automatically add to project list and database
     addProjectToList(this);
-    createItemDb("projects", this);
+    createItemDb("projects", this).catch(error => 
+      console.error("Failed to create project in database:", error?.message || "Unknown error")
+    );
   }
 }
 
@@ -208,12 +212,18 @@ function addProjectToList(project) {
 
 // delete a task from a project
 function deleteTaskFromProject(project, task) {
-  project.tasks.splice(project.tasks.indexOf(task), 1);
+  const index = project.tasks.indexOf(task);
+  if (index > -1) {
+    project.tasks.splice(index, 1);
+  }
   editItemDb("projects", project); // Update database
 }
 
 function removeProjectFromList(project) {
-  projectList.splice(projectList.indexOf(project), 1);
+  const index = projectList.indexOf(project);
+  if (index > -1) {
+    projectList.splice(index, 1);
+  }
 }
 
 function findProjectById(id) {
@@ -233,7 +243,7 @@ function openDB() {
     };
 
     request.onerror = (event) => {
-      console.error("Error opening database:", String(event.target.error));
+      console.error("Error opening database:", event.target.error?.message || "Unknown database error");
       reject(event.target.error);
     };
 
@@ -252,24 +262,34 @@ function openDB() {
 //createItem in the db
 function createItemDb(storeName, item) {
   return new Promise((resolve, reject) => {
+    if (!db) {
+      reject(new Error("Database not initialized"));
+      return;
+    }
     const transaction = db.transaction(storeName, "readwrite");
     const objectStore = transaction.objectStore(storeName);
     const request = objectStore.add(item);
 
     request.onsuccess = () => resolve(request.result);
     request.onerror = () => reject(request.error);
+    transaction.onerror = () => reject(transaction.error);
   });
 }
 
 //get item in the db
 function getItemDb(storeName, id) {
   return new Promise((resolve, reject) => {
+    if (!db) {
+      reject(new Error("Database not initialized"));
+      return;
+    }
     const transaction = db.transaction(storeName, "readonly");
     const objectStore = transaction.objectStore(storeName);
     const request = objectStore.get(id);
 
     request.onsuccess = () => resolve(request.result);
     request.onerror = () => reject(request.error);
+    transaction.onerror = () => reject(transaction.error);
   });
 }
 
@@ -306,6 +326,7 @@ function getAllItemsDb(storeName) {
 
     request.onsuccess = () => resolve(request.result);
     request.onerror = () => reject(request.error);
+    transaction.onerror = () => reject(transaction.error);
   });
 }
 
@@ -318,6 +339,7 @@ function clearAllItemsDb(storeName) {
 
     request.onsuccess = () => resolve();
     request.onerror = () => reject(request.error);
+    transaction.onerror = () => reject(transaction.error);
   });
 }
 
@@ -340,9 +362,9 @@ async function loadFromIndexDB() {
     // Add tasks to taskList and rebuild project relationships
     tasks.forEach((task) => {
       taskList.push(task);
-    });
+    })
   } catch (error) {
-    console.error("Failed to load from indexDB:", String(error));
+    console.error("Failed to load from indexDB:", error?.message || "Unknown error");
   }
 }
 
@@ -350,8 +372,10 @@ async function initializeDB() {
   try {
     await openDB();
     console.log("Database opened successfully");
+    return true;
   } catch (error) {
-    console.error("Failed to open database:", String(error));
+    console.error("Failed to open database:", error?.message || "Unknown error");
+    return false;
   }
 }
 
