@@ -1,8 +1,8 @@
 import {
-  Task,
-  Project,
   taskList,
   projectList,
+  createTask,
+  createProject,
   findTaskById,
   deleteTask,
   editTask,
@@ -103,8 +103,8 @@ function initializeEventListeners() {
     if (event.target.closest(".add-task")) {
       addTaskDialog();
     }
-
-    // Handle add project button clicks
+    
+    // Handle add project button clicks 
     if (event.target.closest(".add-project")) {
       addProjectDialog();
     }
@@ -120,7 +120,7 @@ function initializeEventListeners() {
       const dialog = event.target.closest("dialog");
       if (dialog) {
         processForm(dialog, (formData) => {
-          new Task(
+          createTask(
             formData.get("task-name"),
             formData.get("task-description"),
             formData.get("task-due-date"),
@@ -148,7 +148,7 @@ function initializeEventListeners() {
       const dialog = event.target.closest("dialog");
       if (dialog) {
         processForm(dialog, (formData) => {
-          new Project(
+          createProject(
             formData.get("project-name"),
             formData.get("project-description")
           );

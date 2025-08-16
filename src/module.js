@@ -33,17 +33,6 @@ class Task {
     this.id = crypto.randomUUID();
     this.taskCompleted = taskCompleted;
     this.taskProject = taskProject;
-
-    // Automatically add to task list and database
-    addTaskToList(this);
-    createItemDb("tasks", this);
-
-    if (this.taskProject) {
-      const project = findProjectById(this.taskProject);
-      if (project) {
-        addTaskToProject(project, this);
-      }
-    }
   }
 }
 
@@ -64,8 +53,11 @@ function deleteTask(task) {
   if (index > -1) {
     taskList.splice(index, 1);
   }
-  deleteItemDb("tasks", task.id).catch(error => 
-    console.error("Failed to delete task from database:", error?.message || "Unknown error")
+  deleteItemDb("tasks", task.id).catch((error) =>
+    console.error(
+      "Failed to delete task from database:",
+      escapeHtml(String(error?.message || "Unknown error"))
+    )
   );
 }
 
@@ -101,8 +93,11 @@ function editTask(
   task.taskPriority = newPriority;
   task.taskCompleted = newCompleted;
   task.taskProject = newProject;
-  editItemDb("tasks", task).catch(error => 
-    console.error("Failed to update task in database:", error?.message || "Unknown error")
+  editItemDb("tasks", task).catch((error) =>
+    console.error(
+      "Failed to update task in database:",
+      escapeHtml(String(error?.message || "Unknown error"))
+    )
   );
 }
 
@@ -141,7 +136,7 @@ function getThisWeeksTasks() {
   const today = new Date();
   const nextWeek = new Date(today);
   nextWeek.setDate(today.getDate() + 7);
-  const todayFormatted = today.toISOString().slice(0, 10);
+  const todayFormatted = getTodayFormatted();
   const nextWeekFormatted = nextWeek.toISOString().slice(0, 10);
 
   return taskList.filter((task) => {
@@ -158,10 +153,11 @@ function getHighPriorityTasks() {
 }
 
 function searchTasks(query) {
+  const lowerQuery = query.toLowerCase();
   return taskList.filter(
     (task) =>
-      task.taskName?.toLowerCase().includes(query.toLowerCase()) ||
-      task.taskDescription?.toLowerCase().includes(query.toLowerCase())
+      task.taskName?.toLowerCase().includes(lowerQuery) ||
+      task.taskDescription?.toLowerCase().includes(lowerQuery)
   );
 }
 
@@ -173,40 +169,56 @@ class Project {
     this.tasks = [];
     this.id = crypto.randomUUID();
     this.creationDate = new Date();
-
-    // Automatically add to project list and database
-    addProjectToList(this);
-    createItemDb("projects", this).catch(error => 
-      console.error("Failed to create project in database:", error?.message || "Unknown error")
-    );
   }
 }
 
 // adding task to project
 function addTaskToProject(project, task) {
   project.tasks.push(task);
-  editItemDb("projects", project); // Update database
+  editItemDb("projects", project).catch((error) =>
+    console.error(
+      "Failed to update project in database:",
+      escapeHtml(String(error?.message || "Unknown error"))
+    )
+  );
 }
 
 //function to edit project
 function editProject(project, newName, newDescription) {
   project.projectName = validateInput(newName, 100);
   project.projectDescription = validateInput(newDescription, 500);
-  editItemDb("projects", project); // Update database
+  editItemDb("projects", project).catch((error) =>
+    console.error(
+      "Failed to update project in database:",
+      escapeHtml(String(error?.message || "Unknown error"))
+    )
+  );
 }
 
 //function to delete project
-function deleteProject(project) {
+async function deleteProject(project) {
   // Disassociate tasks from project instead of deleting them
   if (project.tasks.length > 0) {
-    project.tasks.forEach((task) => {
-      task.taskProject = null;
-      editItemDb("tasks", task);
-    });
+    await Promise.all(
+      project.tasks.map((task) => {
+        task.taskProject = null;
+        return editItemDb("tasks", task).catch((error) =>
+          console.error(
+            "Failed to update task in database:",
+            escapeHtml(String(error?.message || "Unknown error"))
+          )
+        );
+      })
+    );
   }
 
   removeProjectFromList(project);
-  deleteItemDb("projects", project.id);
+  deleteItemDb("projects", project.id).catch((error) =>
+    console.error(
+      "Failed to delete project from database:",
+      escapeHtml(String(error?.message || "Unknown error"))
+    )
+  );
 }
 
 // Helper functions for project management
@@ -220,7 +232,12 @@ function deleteTaskFromProject(project, task) {
   if (index > -1) {
     project.tasks.splice(index, 1);
   }
-  editItemDb("projects", project); // Update database
+  editItemDb("projects", project).catch((error) =>
+    console.error(
+      "Failed to update project in database:",
+      escapeHtml(String(error?.message || "Unknown error"))
+    )
+  );
 }
 
 function removeProjectFromList(project) {
@@ -247,111 +264,70 @@ function openDB() {
     };
 
     request.onerror = (event) => {
-      console.error("Error opening database:", event.target.error?.message || "Unknown database error");
+      console.error(
+        "Error opening database:",
+        escapeHtml(String(event.target.error?.message || "Unknown database error"))
+      );
       reject(event.target.error);
     };
 
     request.onupgradeneeded = function (event) {
       db = event.target.result;
       if (!db.objectStoreNames.contains("tasks")) {
-        const objectStore = db.createObjectStore("tasks", { keyPath: "id" });
+        db.createObjectStore("tasks", { keyPath: "id" });
       }
       if (!db.objectStoreNames.contains("projects")) {
-        const objectStore = db.createObjectStore("projects", { keyPath: "id" });
+        db.createObjectStore("projects", { keyPath: "id" });
       }
     };
   });
 }
 
-//createItem in the db
-function createItemDb(storeName, item) {
+function dbRequest(storeName, mode, action, ...args) {
   return new Promise((resolve, reject) => {
     if (!db) {
       reject(new Error("Database not initialized"));
       return;
     }
-    const transaction = db.transaction(storeName, "readwrite");
+    const transaction = db.transaction(storeName, mode);
     const objectStore = transaction.objectStore(storeName);
-    const request = objectStore.add(item);
+    const request = objectStore[action](...args);
 
     request.onsuccess = () => resolve(request.result);
     request.onerror = () => reject(request.error);
     transaction.onerror = () => reject(transaction.error);
   });
+}
+//createItem in the db
+function createItemDb(storeName, item) {
+  return dbRequest(storeName, "readwrite", "add", item);
 }
 
 //get item in the db
 function getItemDb(storeName, id) {
-  return new Promise((resolve, reject) => {
-    if (!db) {
-      reject(new Error("Database not initialized"));
-      return;
-    }
-    const transaction = db.transaction(storeName, "readonly");
-    const objectStore = transaction.objectStore(storeName);
-    const request = objectStore.get(id);
-
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
-    transaction.onerror = () => reject(transaction.error);
-  });
+  return dbRequest(storeName, "readonly", "get", id);
 }
 
 //edit item in the db
 function editItemDb(storeName, item) {
-  return new Promise((resolve, reject) => {
-    const transaction = db.transaction(storeName, "readwrite");
-    const objectStore = transaction.objectStore(storeName);
-    const request = objectStore.put(item);
-
-    request.onsuccess = () => resolve();
-    request.onerror = () => reject(request.error);
-  });
+  return dbRequest(storeName, "readwrite", "put", item);
 }
 
 //delete item in the db
 function deleteItemDb(storeName, id) {
-  return new Promise((resolve, reject) => {
-    const transaction = db.transaction(storeName, "readwrite");
-    const objectStore = transaction.objectStore(storeName);
-    const request = objectStore.delete(id);
-
-    request.onsuccess = () => resolve();
-    request.onerror = () => reject(request.error);
-  });
+  return dbRequest(storeName, "readwrite", "delete", id);
 }
 
 //get all items in the db
 function getAllItemsDb(storeName) {
-  return new Promise((resolve, reject) => {
-    const transaction = db.transaction(storeName, "readonly");
-    const objectStore = transaction.objectStore(storeName);
-    const request = objectStore.getAll();
-
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
-    transaction.onerror = () => reject(transaction.error);
-  });
-}
-
-//clear all items in the db
-function clearAllItemsDb(storeName) {
-  return new Promise((resolve, reject) => {
-    const transaction = db.transaction(storeName, "readwrite");
-    const objectStore = transaction.objectStore(storeName);
-    const request = objectStore.clear();
-
-    request.onsuccess = () => resolve();
-    request.onerror = () => reject(request.error);
-    transaction.onerror = () => reject(transaction.error);
-  });
+  return dbRequest(storeName, "readonly", "getAll");
 }
 
 //close the database
 function closeDB() {
   if (db) {
     db.close();
-    console.log("Database closed");
+    console.info("Database closed");
   }
 }
 
@@ -363,22 +339,67 @@ async function loadFromIndexDB() {
     // Add projects to projectList first
     projects.forEach((project) => projectList.push(project));
 
-    // Add tasks to taskList and rebuild project relationships
+    // Add tasks to taskList
     tasks.forEach((task) => {
       taskList.push(task);
-    })
+    });
   } catch (error) {
-    console.error("Failed to load from indexDB:", error?.message || "Unknown error");
+    console.error(
+      "Failed to load from indexDB:",
+      escapeHtml(String(error?.message || "Unknown error"))
+    );
   }
+}
+
+function createTask(
+  taskName,
+  taskDescription,
+  taskDueDate,
+  taskPriority,
+  taskCompleted = false,
+  taskProject = null
+) {
+  const task = new Task(
+    taskName,
+    taskDescription,
+    taskDueDate,
+    taskPriority,
+    taskCompleted,
+    taskProject
+  );
+  addTaskToList(task);
+  createItemDb("tasks", task).catch((error) =>
+    console.error("Failed to create task in database:", error)
+  );
+
+  if (task.taskProject) {
+    const project = findProjectById(task.taskProject);
+    if (project) {
+      addTaskToProject(project, task);
+    }
+  }
+  return task;
+}
+
+function createProject(projectName, projectDescription = "") {
+  const project = new Project(projectName, projectDescription);
+  addProjectToList(project);
+  createItemDb("projects", project).catch((error) =>
+    console.error("Failed to create project in database:", error)
+  );
+  return project;
 }
 
 async function initializeDB() {
   try {
     await openDB();
-    console.log("Database opened successfully");
+    console.info("Database opened successfully");
     return true;
   } catch (error) {
-    console.error("Failed to open database:", error?.message || "Unknown error");
+    console.error(
+      "Failed to open database:",
+      escapeHtml(String(error?.message || "Unknown error"))
+    );
     return false;
   }
 }
@@ -386,6 +407,8 @@ async function initializeDB() {
 export {
   Task,
   Project,
+  createTask,
+  createProject,
   taskList,
   projectList,
   findTaskById,
