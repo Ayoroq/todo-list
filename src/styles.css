@@ -286,9 +286,6 @@ textarea {
   opacity: 0.6;
 }
 
-.task-card.completed {
-}
-
 .hidden {
   display: none;
 }

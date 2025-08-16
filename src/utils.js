@@ -8,7 +8,7 @@ const escapeMap = {
 };
 
 function escapeHtml(text) {
-  if (text == null) return '';
+  if (text === null || text === undefined) return '';
   return String(text).replace(/[&<>"']/g, (match) => escapeMap[match]);
 }
 
