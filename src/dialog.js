@@ -1,4 +1,5 @@
 import { projectList, findProjectById } from "./module.js";
+import { escapeHtml } from "./utils.js";
 
 const body = document.querySelector("body");
 function taskDialog(task = null) {
@@ -18,7 +19,7 @@ function taskDialog(task = null) {
         class="task-name"
         placeholder="Task Name"
         id="task-name"
-        value="${isEdit ? task.taskName : ""}"
+        value="${isEdit ? escapeHtml(task.taskName) : ""}"
         required
         />
     </p>
@@ -29,7 +30,7 @@ function taskDialog(task = null) {
         class="task-description"
         placeholder="Task Description"
         id="task-description"
-        >${isEdit ? task.taskDescription : ""}</textarea>
+        >${isEdit ? escapeHtml(task.taskDescription) : ""}</textarea>
     </p>
     <p>
         <label for="task-priority">Choose a priority</label>
@@ -52,7 +53,7 @@ function taskDialog(task = null) {
     <p>
         <label for="task-due-date">Task Due date</label>
         <input type="date" name="task-due-date" class="task-due-date" id="task-due-date" value="${
-          isEdit ? task.taskDueDate : ""
+          isEdit ? escapeHtml(task.taskDueDate) : ""
         }">
     </p>
     <p>
@@ -61,7 +62,7 @@ function taskDialog(task = null) {
         <option value="">No Project</option>
         </select>
     </p>
-    ${isEdit ? `<input type="hidden" name="task-id" value="${task.id}">` : ""}
+    ${isEdit ? `<input type="hidden" name="task-id" value="${escapeHtml(task.id)}">` : ""}
     <div class="dialog-buttons">
         <button type="button" class="close">Cancel</button>
         <button type="submit" class="${
@@ -78,7 +79,7 @@ function taskDialog(task = null) {
   projectList.forEach((project) => {
     const option = document.createElement("option");
     option.value = project.id;
-    option.textContent = project.projectName;
+    option.textContent = escapeHtml(project.projectName);
     option.selected = isEdit && task.taskProject === project.id;
     projectSelect.appendChild(option);
   });
@@ -110,7 +111,7 @@ function projectDialog(project = null) {
         class="project-name"
         placeholder="Project Name"
         id="project-name"
-        value="${isEdit ? project.projectName : ""}"
+        value="${isEdit ? escapeHtml(project.projectName) : ""}"
         required
         />
     </p>
@@ -121,11 +122,11 @@ function projectDialog(project = null) {
         class="project-description"
         placeholder="Project Description"
         id="project-description"
-        >${isEdit ? project.projectDescription : ""}</textarea>
+        >${isEdit ? escapeHtml(project.projectDescription) : ""}</textarea>
     </p>
     ${
       isEdit
-        ? `<input type="hidden" name="project-id" value="${project.id}">`
+        ? `<input type="hidden" name="project-id" value="${escapeHtml(project.id)}">`
         : ""
     }
     <div class="dialog-buttons">

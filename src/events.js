@@ -16,6 +16,7 @@ import {
   searchTasks,
   deleteProject,
 } from "./module.js";
+import { escapeHtml } from "./utils.js";
 import {
   addTaskDialog,
   addProjectDialog,
@@ -305,7 +306,7 @@ function initializeEventListeners() {
       }
 
       const searchResults = searchTasks(query);
-      renderTasksByFilter(`Search: "${query}"`, searchResults);
+      renderTasksByFilter(`Search: "${escapeHtml(query)}"`, searchResults);
     }
   });
 }

@@ -1,4 +1,5 @@
 import { taskList, projectList, searchTasks } from "./module.js";
+import { escapeHtml } from "./utils.js";
 
 // DOM elements
 const mainContainer = document.querySelector(".main");
@@ -38,13 +39,13 @@ function createTaskCard(task) {
       }>
     </div>
     <div class="task-body">
-      <h3 class="task-name">${task.taskName}</h3>
-      <p class="task-description">${task.taskDescription}</p>
+      <h3 class="task-name">${escapeHtml(task.taskName)}</h3>
+      <p class="task-description">${escapeHtml(task.taskDescription)}</p>
       <div class="task-meta">
-        <span class="task-priority priority-${task.taskPriority.toLowerCase()}">${
+        <span class="task-priority priority-${escapeHtml(task.taskPriority?.toLowerCase())}">${escapeHtml(
     task.taskPriority
-  }</span>
-        <span class="task-due-date">${task.taskDueDate}</span>
+  )}</span>
+        <span class="task-due-date">${escapeHtml(task.taskDueDate)}</span>
       </div>
     </div>
     <div class="task-actions">
@@ -70,7 +71,7 @@ function renderProjects() {
     projectContainer.className = "project-container";
     projectContainer.dataset.projectId = project.id;
     projectContainer.innerHTML = `
-      <button class="project-btn">${project.projectName}</button>
+      <button class="project-btn">${escapeHtml(project.projectName)}</button>
       <div class="project-actions">
         <button class="add-task-btn">&#x2b</button>
         <button class="edit-project-btn">&#9998</button>
@@ -85,9 +86,9 @@ function renderProjectTasks(project) {
   // Clear existing content
   mainContainer.innerHTML = "";
   header.innerHTML = "";
-  const ProjectName = document.createElement("h2");
-  ProjectName.textContent = project.projectName;
-  header.appendChild(ProjectName);
+  const projectName = document.createElement("h2");
+  projectName.textContent = project.projectName;
+  header.appendChild(projectName);
 
   // Render each task
   if (project.tasks.length === 0) {
@@ -107,7 +108,7 @@ function renderTasksByFilter(filter, tasks) {
   mainContainer.innerHTML = "";
   header.innerHTML = "";
   const headerText = document.createElement("h2");
-  headerText.textContent = `${filter} Tasks`;
+  headerText.textContent = `${escapeHtml(filter)} Tasks`;
   header.appendChild(headerText);
 
   // Render each task

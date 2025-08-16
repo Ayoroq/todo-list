@@ -1,9 +1,17 @@
+import { escapeHtml } from "./utils.js";
+
 const projectList = [];
 const taskList = [];
 const today = new Date();
 const dbName = "ToDoDatabase";
 const dbVersion = 3;
 const formattedDate = today.toISOString().slice(0, 10);
+
+// Input validation function
+function validateInput(input, maxLength = 1000) {
+  if (typeof input !== "string") return "";
+  return input.trim().slice(0, maxLength);
+}
 
 // class to create a task
 class Task {
@@ -15,8 +23,8 @@ class Task {
     taskCompleted = false,
     taskProject = null
   ) {
-    this.taskName = taskName;
-    this.taskDescription = taskDescription;
+    this.taskName = validateInput(taskName, 200);
+    this.taskDescription = validateInput(taskDescription, 1000);
     this.creationDate = new Date();
     this.taskDueDate = taskDueDate;
     this.taskPriority = taskPriority;
@@ -26,7 +34,7 @@ class Task {
 
     // Automatically add to task list and database
     addTaskToList(this);
-    createItemDb("tasks", this)
+    createItemDb("tasks", this);
 
     if (this.taskProject) {
       const project = findProjectById(this.taskProject);
@@ -42,8 +50,6 @@ class Task {
 function addTaskToList(task) {
   taskList.push(task);
 }
-
-
 
 function deleteTask(task) {
   if (task.taskProject) {
@@ -82,8 +88,8 @@ function editTask(
     }
   }
 
-  task.taskName = newName;
-  task.taskDescription = newDescription;
+  task.taskName = validateInput(newName, 200);
+  task.taskDescription = validateInput(newDescription, 1000);
   task.taskDueDate = newDueDate;
   task.taskPriority = newPriority;
   task.taskCompleted = newCompleted;
@@ -156,15 +162,15 @@ function searchTasks(query) {
 // project management class
 class Project {
   constructor(projectName, projectDescription = "") {
-    this.projectName = projectName;
-    this.projectDescription = projectDescription;
+    this.projectName = validateInput(projectName, 100);
+    this.projectDescription = validateInput(projectDescription, 500);
     this.tasks = [];
     this.id = crypto.randomUUID();
     this.creationDate = new Date();
 
     // Automatically add to project list and database
     addProjectToList(this);
-    createItemDb("projects", this)
+    createItemDb("projects", this);
   }
 }
 
@@ -176,8 +182,8 @@ function addTaskToProject(project, task) {
 
 //function to edit project
 function editProject(project, newName, newDescription) {
-  project.projectName = newName;
-  project.projectDescription = newDescription;
+  project.projectName = validateInput(newName, 100);
+  project.projectDescription = validateInput(newDescription, 500);
   editItemDb("projects", project); // Update database
 }
 
@@ -213,8 +219,6 @@ function removeProjectFromList(project) {
 function findProjectById(id) {
   return projectList.find((project) => project.id === id);
 }
-
-
 
 // Let us open our database
 let db;
@@ -325,31 +329,21 @@ function closeDB() {
   }
 }
 
-async function loadFromIndexDB(){
- try {
-  const tasks = await getAllItemsDb("tasks");
-  const projects = await getAllItemsDb("projects");
+async function loadFromIndexDB() {
+  try {
+    const tasks = await getAllItemsDb("tasks");
+    const projects = await getAllItemsDb("projects");
 
-  // Add projects to projectList first
+    // Add projects to projectList first
     projects.forEach((project) => projectList.push(project));
 
     // Add tasks to taskList and rebuild project relationships
     tasks.forEach((task) => {
       taskList.push(task);
-
-      // // Rebuild task-project relationships
-      // if (task.taskProject) {
-      //   const project = findProjectById(task.taskProject);
-      //   if (project) {
-      //   addTaskToProject(project, task);
-
-      //   }
-      // }
     });
-
- } catch (error) {
-  console.error("Failed to load from indexDB:", error);
- }
+  } catch (error) {
+    console.error("Failed to load from indexDB:", error);
+  }
 }
 
 async function initializeDB() {
