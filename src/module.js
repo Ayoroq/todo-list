@@ -341,7 +341,8 @@ async function loadFromIndexDB(){
       // if (task.taskProject) {
       //   const project = findProjectById(task.taskProject);
       //   if (project) {
-      //     project.tasks.push(task);
+      //   addTaskToProject(project, task);
+
       //   }
       // }
     });

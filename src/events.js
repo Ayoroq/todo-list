@@ -50,6 +50,35 @@ function getProjectFromContainer(element) {
   return projectList.find((p) => p.id === projectId);
 }
 
+const filterMap = {
+  all: () => renderAll(),
+  today: () => renderTasksByFilter("Today's", getTodayTasks()),
+  completed: () => renderTasksByFilter("Completed", getCompletedTasks()),
+  overdue: () => renderTasksByFilter("Overdue", getOverdueTasks()),
+  "this-week": () => renderTasksByFilter("This Week's", getThisWeeksTasks()),
+  "high-priority": () =>
+    renderTasksByFilter("High Priority", getHighPriorityTasks()),
+};
+
+function Same() {
+  const active = document.querySelector(".active");
+  // Then check if it's a task filter or project button
+  const isTaskFilter = active?.closest(".task-filter");
+  const isProject = active?.classList.contains("project-btn");
+  if (isTaskFilter) {
+    const filterType = active.getAttribute("data-filter");
+    if (filterMap[filterType]) {
+      filterMap[filterType]();
+    }
+  }
+  if (isProject) {
+    const project = getProjectFromContainer(active);
+    if (project) {
+      renderProjectTasks(project);
+    }
+  }
+}
+
 // Prevent duplicate event listeners
 let eventListenersInitialized = false;
 
@@ -87,6 +116,16 @@ function initializeEventListeners() {
             formData.get("task-completed") === "on",
             formData.get("task-project")
           );
+
+          // Remove the active class from any previously active button
+          const activeButton = document.querySelector(".active");
+          if (activeButton) {
+            activeButton.classList.remove("active");
+          }
+          const all = document.querySelector("[data-filter='all']");
+          if (all) {
+            all.classList.add("active");
+          }
           renderTasks();
         });
       }
@@ -106,7 +145,7 @@ function initializeEventListeners() {
       }
     }
 
-    //handle delete task button clicks
+    //handle delete task button clicks for tasks
     if (event.target.matches(".delete-btn")) {
       const taskCard = event.target.closest(".task-card");
       const taskId = taskCard.dataset.taskId;
@@ -116,11 +155,11 @@ function initializeEventListeners() {
         confirm(`Are you sure you want to delete the task ${task.taskName}?`)
       ) {
         deleteTask(task);
-        renderTasks();
+        Same();
       }
     }
 
-    //handles the edit button clicks
+    //handles the edit button clicks for tasks
     if (event.target.matches(".edit-btn")) {
       const taskCard = event.target.closest(".task-card");
       const taskId = taskCard.dataset.taskId;
@@ -129,17 +168,6 @@ function initializeEventListeners() {
         editTaskDialog(task);
       }
     }
-
-    const filterMap = {
-      all: () => renderAll(),
-      today: () => renderTasksByFilter("Today's", getTodayTasks()),
-      completed: () => renderTasksByFilter("Completed", getCompletedTasks()),
-      overdue: () => renderTasksByFilter("Overdue", getOverdueTasks()),
-      "this-week": () =>
-        renderTasksByFilter("This Week's", getThisWeeksTasks()),
-      "high-priority": () =>
-        renderTasksByFilter("High Priority", getHighPriorityTasks()),
-    };
 
     // handles save on edit task
     if (event.target.matches(".save-edit-task")) {
@@ -158,28 +186,12 @@ function initializeEventListeners() {
               formData.get("task-project")
             );
           }
-          const active = document.querySelector(".active");
-          // Then check if it's a task filter or project button
-          const isTaskFilter = active?.closest(".task-filter");
-          const isProject = active?.classList.contains("project-btn");
-          if (isTaskFilter) {
-            const filterType = active.getAttribute("data-filter");
-            if (filterMap[filterType]) {
-              filterMap[filterType]();
-            }
-          }
-          if (isProject) {
-            const project = getProjectFromContainer(active);
-            if (project) {
-              renderProjectTasks(project);
-            }
-          }
+          Same();
         });
       }
     }
 
     //handling the filtering of task when the buttons are clicked
-
     if (event.target.matches(".task-filter button")) {
       const filterType = event.target.getAttribute("data-filter");
 
