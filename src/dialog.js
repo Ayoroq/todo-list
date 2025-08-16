@@ -134,13 +134,12 @@ function taskDialog(task = null) {
   dialog.showModal();
 
   // Populate projects dropdown
-  const projectSelectElement = dialog.querySelector(".task-project");
   projectList.forEach((project) => {
     const option = document.createElement("option");
     option.value = project.id;
     option.textContent = project.projectName;
     option.selected = isEdit && task.taskProject === project.id;
-    projectSelectElement.appendChild(option);
+    projectSelect.appendChild(option);
   });
 }
 

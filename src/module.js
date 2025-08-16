@@ -64,7 +64,9 @@ function deleteTask(task) {
   if (index > -1) {
     taskList.splice(index, 1);
   }
-  deleteItemDb("tasks", task.id);
+  deleteItemDb("tasks", task.id).catch(error => 
+    console.error("Failed to delete task from database:", error?.message || "Unknown error")
+  );
 }
 
 function editTask(
@@ -99,7 +101,9 @@ function editTask(
   task.taskPriority = newPriority;
   task.taskCompleted = newCompleted;
   task.taskProject = newProject;
-  editItemDb("tasks", task); // Update database
+  editItemDb("tasks", task).catch(error => 
+    console.error("Failed to update task in database:", error?.message || "Unknown error")
+  );
 }
 
 // Find functions
