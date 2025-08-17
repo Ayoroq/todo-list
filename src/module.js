@@ -49,7 +49,7 @@ function deleteTask(task) {
       deleteTaskFromProject(project, task);
     }
   }
-  const index = taskList.indexOf(task);
+  const index = taskList.findIndex(t => t.id === task.id);
   if (index > -1) {
     taskList.splice(index, 1);
   }
@@ -82,12 +82,26 @@ function editTask(
     }
   }
 
+  // Update task properties
   task.taskName = validateInput(newName, 200);
   task.taskDescription = validateInput(newDescription, 1000);
   task.taskDueDate = newDueDate;
   task.taskPriority = newPriority;
   task.taskCompleted = newCompleted;
   task.taskProject = newProject;
+
+  // Update task reference in project if it belongs to one
+  if (task.taskProject) {
+    const project = findProjectById(task.taskProject);
+    if (project) {
+      const taskIndex = project.tasks.findIndex(t => t.id === task.id);
+      if (taskIndex > -1) {
+        project.tasks[taskIndex] = task;
+        console.log(project.tasks)
+        updateProjectInList(project);
+      }
+    }
+  }
   editItemDb("tasks", task).catch((error) => console.error("Failed to update task in database:", error));
 }
 
@@ -165,6 +179,17 @@ class Project {
 // adding task to project
 function addTaskToProject(project, task) {
   project.tasks.push(task);
+  updateProjectInList(project);
+  editItemDb("projects", project).catch((error) => console.error("Failed to update project in database:", error));
+}
+
+// delete a task from a project
+function deleteTaskFromProject(project, task) {
+  const index = project.tasks.findIndex(t => t.id === task.id);
+  if (index > -1) {
+    project.tasks.splice(index, 1);
+  }
+  updateProjectInList(project);
   editItemDb("projects", project).catch((error) => console.error("Failed to update project in database:", error));
 }
 
@@ -172,6 +197,7 @@ function addTaskToProject(project, task) {
 function editProject(project, newName, newDescription) {
   project.projectName = validateInput(newName, 100);
   project.projectDescription = validateInput(newDescription, 500);
+  updateProjectInList(project);
   editItemDb("projects", project).catch((error) => console.error("Failed to update project in database:", error));
 }
 
@@ -196,17 +222,8 @@ function addProjectToList(project) {
   projectList.push(project);
 }
 
-// delete a task from a project
-function deleteTaskFromProject(project, task) {
-  const index = project.tasks.indexOf(task);
-  if (index > -1) {
-    project.tasks.splice(index, 1);
-  }
-  editItemDb("projects", project).catch((error) => console.error("Failed to update project in database:", error));
-}
-
 function removeProjectFromList(project) {
-  const index = projectList.indexOf(project);
+  const index = projectList.findIndex(p => p.id === project.id);
   if (index > -1) {
     projectList.splice(index, 1);
   }
@@ -214,6 +231,14 @@ function removeProjectFromList(project) {
 
 function findProjectById(id) {
   return projectList.find((project) => project.id === id);
+}
+
+function updateProjectInList(project) {
+  const projectIndex = projectList.findIndex(p => p.id === project.id);
+  if (projectIndex > -1) {
+    projectList[projectIndex] = project;
+  }
+  editItemDb("projects", project).catch((error) => console.error("Failed to update project in database:", error));
 }
 
 // Let us open our database

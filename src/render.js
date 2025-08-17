@@ -1,5 +1,4 @@
 import { taskList, projectList, searchTasks } from "./module.js";
-import { escapeHtml } from "./utils.js";
 
 // DOM elements
 const mainContainer = document.querySelector(".main");
@@ -164,7 +163,7 @@ function renderTasksByFilter(filter, tasks) {
   mainContainer.textContent = "";
   header.textContent = "";
   const headerText = document.createElement("h2");
-  headerText.textContent = `${escapeHtml(filter)} Tasks`;
+  headerText.textContent = `${filter} Tasks`;
   header.appendChild(headerText);
 
   // Render each task

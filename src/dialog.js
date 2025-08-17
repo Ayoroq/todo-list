@@ -1,5 +1,4 @@
 import { projectList, findProjectById } from "./module.js";
-import { escapeHtml } from "./utils.js";
 
 const body = document.body;
 function taskDialog(task = null) {
