@@ -276,11 +276,13 @@ function initializeEventListeners() {
         project &&
         confirm(
           `Are you sure you want to delete the project ${project.projectName}?
+
           This will also disassociate all tasks associated with this project.`
         )
       ) {
-        deleteProject(project);
-        renderProjects();
+        deleteProject(project).then(() => {
+          renderProjects();
+        });
       }
     }
   });
