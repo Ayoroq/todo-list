@@ -49,9 +49,9 @@ body {
   align-items: flex-end;
 }
 
-.header h2{
-    margin: 0;
-    font-size: xx-large;
+.header h2 {
+  margin: 0;
+  font-size: xx-large;
 }
 
 .search-container {
@@ -79,8 +79,8 @@ body {
 }
 
 /* ===== SIDEBAR COMPONENTS ===== */
-.title{
-    font-size: large;
+.title {
+  font-size: large;
 }
 
 .task-container {
@@ -240,11 +240,12 @@ body {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   z-index: 1000;
   min-width: 400px;
+  margin: 0;
 }
 
-.add-task-dialog *{
-    margin: 0;
-    outline: none;
+.add-task-dialog * {
+  margin: 0;
+  outline: none;
 }
 
 textarea {
@@ -254,6 +255,7 @@ textarea {
   border-radius: 5px;
   border: 1px solid #cccccc;
   box-shadow: 1px 1px 1px #999999;
+  outline: none;
 }
 
 .add-task-dialog::backdrop,
@@ -274,6 +276,31 @@ textarea {
   border: 1px solid var(--color-border);
   border-radius: 4px;
   font-size: 1rem;
+}
+
+.dialog-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+.dialog-buttons button {
+  padding: 0.5rem 1.5rem;
+  border: none;
+  background: none;
+  border-bottom: 2px solid #ccc;
+  border-radius: 4px;
+}
+
+.close:hover {
+  background-color: #dc2626;
+}
+button[type="submit"]:hover {
+  background-color: #16a34a;
+}
+
+input{
+  outline: none;
 }
 
 /* ===== UTILITY CLASSES ===== */
