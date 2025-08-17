@@ -362,8 +362,7 @@ async function loadFromIndexDB() {
 
     // Add tasks to taskList
     tasks.forEach((task) => {
-      taskList.push(task);
-
+      addTaskToList(task);
     });
   } catch (error) {
     console.error("Failed to load from indexDB:", error);
