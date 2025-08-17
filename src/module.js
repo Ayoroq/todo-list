@@ -1,5 +1,3 @@
-import { escapeHtml } from "./utils.js";
-
 const projectList = [];
 const taskList = [];
 const dbName = "ToDoDatabase";
@@ -40,6 +38,12 @@ class Task {
 //add task to the task list
 function addTaskToList(task) {
   taskList.push(task);
+  taskList.sort((a, b) => {
+    if (!a.taskDueDate && !b.taskDueDate) return 0;
+    if (!a.taskDueDate) return 1;
+    if (!b.taskDueDate) return -1;
+    return new Date(a.taskDueDate) - new Date(b.taskDueDate);
+  });
 }
 
 function deleteTask(task) {
@@ -242,6 +246,33 @@ function updateProjectInList(project) {
     projectList[projectIndex] = project;
   }
   editItemDb("projects", project).catch((error) => console.error("Failed to update project in database:", error));
+}
+
+// function to help sort the tasks
+function sortTasks(tasks, sortBy="dueDate", sortOrder="asc"){
+  if (sortBy === "dueDate") {
+    tasks.sort((a, b) => {
+      if (sortOrder === "asc") {
+        return new Date(a.taskDueDate) - new Date(b.taskDueDate);
+      } else {
+        return new Date(b.taskDueDate) - new Date(a.taskDueDate);
+      }
+    });
+  } else if (sortBy === "priority") {
+    const priorityOrder = {
+      "low": 1,
+      "medium": 2,
+      "high": 3
+    };
+    tasks.sort((a, b) => {
+      if (sortOrder === "asc") {
+        return priorityOrder[a.taskPriority] - priorityOrder[b.taskPriority];
+      } else {
+        return priorityOrder[b.taskPriority] - priorityOrder[a.taskPriority];
+      }
+    });
+  }
+  return tasks;
 }
 
 // Let us open our database
