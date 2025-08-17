@@ -207,7 +207,10 @@ async function deleteProject(project) {
   if (project.tasks.length > 0) {
     await Promise.all(
       project.tasks.map((task) => {
-        task.taskProject = null;
+        const index = taskList.findIndex(t => t.id === task.id);
+        if (index > -1) {
+          taskList[index].taskProject = null;
+        }
         return editItemDb("tasks", task).catch((error) => console.error("Failed to update task in database:", error));
       })
     );
