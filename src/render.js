@@ -9,35 +9,36 @@ const projectFilter = document.querySelector(".project-filter");
 function createSortDropdown() {
   const sortDropdown = document.createElement("div");
   sortDropdown.className = "sort-dropdown";
-  
+
   const dropdownToggle = document.createElement("button");
   dropdownToggle.className = "dropdown-toggle";
   const sortImg = document.createElement("img");
   sortImg.src = sortImage;
   sortImg.alt = "Image of the sort button";
   dropdownToggle.appendChild(sortImg);
-  
   const dropdownContent = document.createElement("div");
   dropdownContent.className = "sort-dropdown-content";
-  
+  dropdownContent.classList.add("hidden");
+
+
   const sortOptions = [
     { text: "Due Date Ascending", value: "due-date" },
     { text: "Due Date Descending", value: "due-date-desc" },
     { text: "Priority Ascending", value: "priority-asc" },
-    { text: "Priority Descending", value: "priority-desc" }
+    { text: "Priority Descending", value: "priority-desc" },
   ];
-  
-  sortOptions.forEach(option => {
+
+  sortOptions.forEach((option) => {
     const button = document.createElement("button");
     button.className = "sort-option";
     button.dataset.sort = option.value;
     button.textContent = option.text;
     dropdownContent.appendChild(button);
   });
-  
+
   sortDropdown.appendChild(dropdownToggle);
   sortDropdown.appendChild(dropdownContent);
-  
+
   return sortDropdown;
 }
 
@@ -68,7 +69,7 @@ function createTaskCard(task) {
   taskCard.className = "task-card";
   taskCard.classList.toggle("completed", task.taskCompleted);
   taskCard.dataset.taskId = task.id;
-  
+
   // Create task header
   const taskHeader = document.createElement("div");
   taskHeader.className = "task-header";
@@ -77,55 +78,55 @@ function createTaskCard(task) {
   checkbox.className = "task-checkbox";
   checkbox.checked = task.taskCompleted;
   taskHeader.appendChild(checkbox);
-  
+
   // Create task body
   const taskBody = document.createElement("div");
   taskBody.className = "task-body";
-  
+
   const taskName = document.createElement("h3");
   taskName.className = "task-name";
   taskName.textContent = task.taskName;
-  
+
   const taskDescription = document.createElement("p");
   taskDescription.className = "task-description";
   taskDescription.textContent = task.taskDescription;
-  
+
   const taskMeta = document.createElement("div");
   taskMeta.className = "task-meta";
-  
+
   const priority = document.createElement("span");
   priority.className = `task-priority priority-${task.taskPriority?.toLowerCase()}`;
   priority.textContent = task.taskPriority;
-  
+
   const dueDate = document.createElement("span");
   dueDate.className = "task-due-date";
   dueDate.textContent = task.taskDueDate;
-  
+
   taskMeta.appendChild(priority);
   taskMeta.appendChild(dueDate);
   taskBody.appendChild(taskName);
   taskBody.appendChild(taskDescription);
   taskBody.appendChild(taskMeta);
-  
+
   // Create task actions
   const taskActions = document.createElement("div");
   taskActions.className = "task-actions";
-  
+
   const editBtn = document.createElement("button");
   editBtn.className = "edit-btn";
   editBtn.innerHTML = "&#9998";
-  
+
   const deleteBtn = document.createElement("button");
   deleteBtn.className = "delete-btn";
   deleteBtn.textContent = "🗑️";
-  
+
   taskActions.appendChild(editBtn);
   taskActions.appendChild(deleteBtn);
-  
+
   taskCard.appendChild(taskHeader);
   taskCard.appendChild(taskBody);
   taskCard.appendChild(taskActions);
-  
+
   return taskCard;
 }
 
@@ -143,33 +144,33 @@ function renderProjects() {
     const projectContainer = document.createElement("div");
     projectContainer.className = "project-container";
     projectContainer.dataset.projectId = project.id;
-    
+
     const projectBtn = document.createElement("button");
     projectBtn.className = "project-btn";
     projectBtn.textContent = project.projectName;
-    
+
     const projectActions = document.createElement("div");
     projectActions.className = "project-actions";
-    
+
     const addTaskBtn = document.createElement("button");
     addTaskBtn.className = "add-task-btn";
     addTaskBtn.innerHTML = "&#x2b";
-    
+
     const editProjectBtn = document.createElement("button");
     editProjectBtn.className = "edit-project-btn";
     editProjectBtn.innerHTML = "&#9998";
-    
+
     const deleteProjectBtn = document.createElement("button");
     deleteProjectBtn.className = "delete-project-btn";
     deleteProjectBtn.textContent = "🗑️";
-    
+
     projectActions.appendChild(addTaskBtn);
     projectActions.appendChild(editProjectBtn);
     projectActions.appendChild(deleteProjectBtn);
-    
+
     projectContainer.appendChild(projectBtn);
     projectContainer.appendChild(projectActions);
-    
+
     projectFilter.appendChild(projectContainer);
   });
 }

@@ -54,6 +54,16 @@ body {
   font-size: xx-large;
 }
 
+.sort-dropdown-content{
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.sort-dropdown {
+  position: relative;
+}
+
 .search-container {
   display: flex;
   justify-content: center;

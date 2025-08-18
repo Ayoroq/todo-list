@@ -15,6 +15,7 @@ import {
   getHighPriorityTasks,
   searchTasks,
   deleteProject,
+  changeTaskSort,
 } from "./module.js";
 import { escapeHtml } from "./utils.js";
 import {
@@ -72,7 +73,7 @@ const filterMap = {
     renderTasksByFilter("High Priority", getHighPriorityTasks()),
 };
 
-function Same() {
+function renderActiveView() {
   const active = document.querySelector(".active");
   // Then check if it's a task filter or project button
   const isTaskFilter = active?.closest(".task-filter");
@@ -167,7 +168,7 @@ function initializeEventListeners() {
         confirm(`Are you sure you want to delete the task ${task.taskName}?`)
       ) {
         deleteTask(task);
-        Same();
+        renderActiveView();
       }
     }
 
@@ -198,7 +199,7 @@ function initializeEventListeners() {
               formData.get("task-project")
             );
           }
-          Same();
+          renderActiveView();
         });
       }
     }
@@ -323,6 +324,28 @@ function initializeEventListeners() {
       renderTasksByFilter(`Search: "${escapeHtml(query)}"`, searchResults);
     }
   });
+
+  // handles the sort dropdown
+  document.addEventListener("click", (event) => {
+    if (event.target.matches(".dropdown-toggle, .dropdown-toggle img")) {
+      const dropdownContent = document.querySelector(".sort-dropdown-content");
+      dropdownContent.classList.toggle("hidden");
+    }
+
+    if (event.target.matches(".sort-option")) {
+      const sortType = event.target.getAttribute("data-sort");
+      if (sortType) {
+        changeTaskSort(sortType);
+        const dropdownContent = document.querySelector(".sort-dropdown-content");
+        if (dropdownContent) {
+          dropdownContent.classList.toggle("hidden");
+        }
+        // Re-render tasks after sorting but we need to check if the active button is a task filter or project button
+        renderActiveView()
+      }
+    
+    }
+  })
 }
 
 export { initializeEventListeners };

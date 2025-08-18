@@ -96,11 +96,12 @@ function editTask(
       const taskIndex = project.tasks.findIndex(t => t.id === task.id);
       if (taskIndex > -1) {
         project.tasks[taskIndex] = task;
-        console.log(project.tasks)
+        sortTasks(project.tasks, currentSortTerm);
         updateProjectInList(project);
       }
     }
   }
+  sortTasks(taskList, currentSortTerm);
   editItemDb("tasks", task).catch((error) => console.error("Failed to update task in database:", error));
 }
 
@@ -245,42 +246,41 @@ function updateProjectInList(project) {
 }
 
 // function to help sort the tasks
-function sortTasks(tasks, sortBy="dueDate", sortOrder="asc"){
-  if (sortBy === "dueDate") {
+function sortTasks(tasks, sortTerm = 'due-date'){
+  const priorityOrder = { "low": 1, "medium": 2, "high": 3 };
+  
+  const sortByDate = (desc = false) => {
     tasks.sort((a, b) => {
       if (!a.taskDueDate && !b.taskDueDate) return 0;
       if (!a.taskDueDate) return 1;
       if (!b.taskDueDate) return -1;
-      if (sortOrder === "asc") {
-        return new Date(a.taskDueDate) - new Date(b.taskDueDate);
-      } else {
-        return new Date(b.taskDueDate) - new Date(a.taskDueDate);
-      }
+      const result = new Date(a.taskDueDate) - new Date(b.taskDueDate);
+      return desc ? -result : result;
     });
-  } else if (sortBy === "priority") {
-    const priorityOrder = {
-      "low": 1,
-      "medium": 2,
-      "high": 3
-    };
-    tasks.sort((a, b) => {
-      if (sortOrder === "asc") {
-        return priorityOrder[a.taskPriority] - priorityOrder[b.taskPriority];
-      } else {
-        return priorityOrder[b.taskPriority] - priorityOrder[a.taskPriority];
-      }
-    });
+  };
+  
+  if (sortTerm === "due-date") {
+    sortByDate();
+  } else if (sortTerm === "due-date-desc") {
+    sortByDate(true);
+  } else if (sortTerm === "priority-asc") {
+    tasks.sort((a, b) => priorityOrder[a.taskPriority] - priorityOrder[b.taskPriority]);
+  } else if (sortTerm === "priority-desc") {
+    tasks.sort((a, b) => priorityOrder[b.taskPriority] - priorityOrder[a.taskPriority]);
   }
   return tasks;
 }
 
-function changeTaskSort(sortBy, sortOrder) {
+let currentSortTerm = 'due-date';
+
+function changeTaskSort(sortTerm) {
+  currentSortTerm = sortTerm;
   // Sort main task list
-  sortTasks(taskList, sortBy, sortOrder);
+  sortTasks(taskList, sortTerm);
   
   // Sort tasks in all projects
   projectList.forEach(project => {
-    sortTasks(project.tasks, sortBy, sortOrder);
+    sortTasks(project.tasks, sortTerm);
   });
 }
 
@@ -395,6 +395,7 @@ function createTask(
     taskProject
   );
   addTaskToList(task);
+  sortTasks(taskList, currentSortTerm);
   createItemDb("tasks", task).catch((error) =>
     console.error("Failed to create task in database:", error)
   );
@@ -452,4 +453,5 @@ export {
   addTaskToProject,
   searchTasks,
   changeTaskSort,
+  currentSortTerm,
 };
