@@ -314,15 +314,27 @@ function initializeEventListeners() {
   document.addEventListener("input", (event) => {
     if (event.target.matches(".search")) {
       const query = event.target.value.trim();
+      if (query){
+        // need to remove the active class from any previously active button
+        const activeButton = document.querySelector(".active");
+        if (activeButton) {
+          activeButton.classList.remove("active");
+        }
+      }
 
       if (query === "") {
         renderAll();
+        //set an active class to the all button
+        const allButton = document.querySelector("[data-filter='all']");
+        if (allButton) {
+          allButton.classList.add("active");
+        }
         return;
       }
-
       const searchResults = searchTasks(query);
       renderTasksByFilter(`Search: "${escapeHtml(query)}"`, searchResults);
     }
+    
   });
 
   // handles the sort dropdown
