@@ -24,8 +24,6 @@ async function initialize() {
   try {
     await initializeDB();
     await loadFromIndexDB();
-    console.log(projectList)
-    console.log(taskList)
     renderAll();
     initializeEventListeners();
   } catch (error) {
