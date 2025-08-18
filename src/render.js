@@ -12,6 +12,10 @@ function createSortDropdown() {
 
   const dropdownToggle = document.createElement("button");
   dropdownToggle.className = "dropdown-toggle";
+  const buttonText = document.createElement("span");
+  buttonText.textContent = "Sort Tasks";
+  buttonText.className = "dropdown-text";
+  dropdownToggle.appendChild(buttonText);
   const sortImg = document.createElement("img");
   sortImg.src = sortImage;
   sortImg.alt = "Image of the sort button";

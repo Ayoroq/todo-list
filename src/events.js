@@ -344,7 +344,7 @@ function initializeEventListeners() {
   // handles the sort dropdown
   document.addEventListener("click", (event) => {
     const dropdownContent = document.querySelector(".sort-dropdown-content");
-    if (event.target.matches(".dropdown-toggle, .dropdown-toggle img")) {
+    if (event.target.matches(".dropdown-toggle, .dropdown-toggle img, .dropdown-text")) {
       dropdownContent.classList.toggle("hidden");
     } else if (event.target.matches(".sort-option")) {
       const sortType = event.target.getAttribute("data-sort");
