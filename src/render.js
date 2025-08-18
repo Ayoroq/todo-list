@@ -1,9 +1,45 @@
 import { taskList, projectList, searchTasks } from "./module.js";
+import sortImage from "/assets/sort.svg";
 
 // DOM elements
 const mainContainer = document.querySelector(".main");
 const header = document.querySelector(".header");
 const projectFilter = document.querySelector(".project-filter");
+
+function createSortDropdown() {
+  const sortDropdown = document.createElement("div");
+  sortDropdown.className = "sort-dropdown";
+  
+  const dropdownToggle = document.createElement("button");
+  dropdownToggle.className = "dropdown-toggle";
+  const sortImg = document.createElement("img");
+  sortImg.src = sortImage;
+  sortImg.alt = "Image of the sort button";
+  dropdownToggle.appendChild(sortImg);
+  
+  const dropdownContent = document.createElement("div");
+  dropdownContent.className = "sort-dropdown-content";
+  
+  const sortOptions = [
+    { text: "Due Date Ascending", value: "due-date" },
+    { text: "Due Date Descending", value: "due-date-desc" },
+    { text: "Priority Ascending", value: "priority-asc" },
+    { text: "Priority Descending", value: "priority-desc" }
+  ];
+  
+  sortOptions.forEach(option => {
+    const button = document.createElement("button");
+    button.className = "sort-option";
+    button.dataset.sort = option.value;
+    button.textContent = option.text;
+    dropdownContent.appendChild(button);
+  });
+  
+  sortDropdown.appendChild(dropdownToggle);
+  sortDropdown.appendChild(dropdownContent);
+  
+  return sortDropdown;
+}
 
 function renderTasks() {
   // Clear existing content
@@ -12,6 +48,7 @@ function renderTasks() {
   const headerText = document.createElement("h2");
   headerText.textContent = "All Tasks";
   header.appendChild(headerText);
+  header.appendChild(createSortDropdown());
 
   // Render each task
   if (taskList.length === 0) {
@@ -144,6 +181,7 @@ function renderProjectTasks(project) {
   const projectName = document.createElement("h2");
   projectName.textContent = project.projectName;
   header.appendChild(projectName);
+  header.appendChild(createSortDropdown());
 
   // Render each task
   if (project.tasks.length === 0) {
@@ -165,6 +203,7 @@ function renderTasksByFilter(filter, tasks) {
   const headerText = document.createElement("h2");
   headerText.textContent = `${filter} Tasks`;
   header.appendChild(headerText);
+  header.appendChild(createSortDropdown());
 
   // Render each task
   if (tasks.length === 0) {
