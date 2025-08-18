@@ -4,7 +4,11 @@ const dbName = "ToDoDatabase";
 const dbVersion = 3;
 
 function getTodayFormatted() {
-  return new Date().toISOString().slice(0, 10);
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
 }
 
 // Input validation function
@@ -138,16 +142,24 @@ function getOverdueTasks() {
 
 function getThisWeeksTasks() {
   const today = new Date();
-  const nextWeek = new Date(today);
-  nextWeek.setDate(today.getDate() + 7);
-  const todayFormatted = getTodayFormatted();
-  const nextWeekFormatted = nextWeek.toISOString().slice(0, 10);
+  const dayOfWeek = today.getDay(); // 0 = Sunday, 1 = Monday, etc.
+  
+  // Calculate start of week (Sunday)
+  const startOfWeek = new Date(today);
+  startOfWeek.setDate(today.getDate() - dayOfWeek);
+  
+  // Calculate end of week (Saturday)
+  const endOfWeek = new Date(startOfWeek);
+  endOfWeek.setDate(startOfWeek.getDate() + 6);
+  
+  const startFormatted = `${startOfWeek.getFullYear()}-${String(startOfWeek.getMonth() + 1).padStart(2, '0')}-${String(startOfWeek.getDate()).padStart(2, '0')}`;
+  const endFormatted = `${endOfWeek.getFullYear()}-${String(endOfWeek.getMonth() + 1).padStart(2, '0')}-${String(endOfWeek.getDate()).padStart(2, '0')}`;
 
   return taskList.filter((task) => {
     return (
       task.taskDueDate &&
-      task.taskDueDate >= todayFormatted &&
-      task.taskDueDate <= nextWeekFormatted
+      task.taskDueDate >= startFormatted &&
+      task.taskDueDate <= endFormatted
     );
   });
 }
