@@ -38,12 +38,7 @@ class Task {
 //add task to the task list
 function addTaskToList(task) {
   taskList.push(task);
-  taskList.sort((a, b) => {
-    if (!a.taskDueDate && !b.taskDueDate) return 0;
-    if (!a.taskDueDate) return 1;
-    if (!b.taskDueDate) return -1;
-    return new Date(a.taskDueDate) - new Date(b.taskDueDate);
-  });
+  sortTasks(taskList);
 }
 
 function deleteTask(task) {
@@ -183,6 +178,7 @@ class Project {
 // adding task to project
 function addTaskToProject(project, task) {
   project.tasks.push(task);
+  sortTasks(project.tasks);
   updateProjectInList(project);
   editItemDb("projects", project).catch((error) => console.error("Failed to update project in database:", error));
 }
@@ -252,6 +248,9 @@ function updateProjectInList(project) {
 function sortTasks(tasks, sortBy="dueDate", sortOrder="asc"){
   if (sortBy === "dueDate") {
     tasks.sort((a, b) => {
+      if (!a.taskDueDate && !b.taskDueDate) return 0;
+      if (!a.taskDueDate) return 1;
+      if (!b.taskDueDate) return -1;
       if (sortOrder === "asc") {
         return new Date(a.taskDueDate) - new Date(b.taskDueDate);
       } else {
@@ -273,6 +272,16 @@ function sortTasks(tasks, sortBy="dueDate", sortOrder="asc"){
     });
   }
   return tasks;
+}
+
+function changeTaskSort(sortBy, sortOrder) {
+  // Sort main task list
+  sortTasks(taskList, sortBy, sortOrder);
+  
+  // Sort tasks in all projects
+  projectList.forEach(project => {
+    sortTasks(project.tasks, sortBy, sortOrder);
+  });
 }
 
 // Let us open our database
@@ -428,6 +437,22 @@ export {
   projectList,
   findTaskById,
   findProjectById,
+  getCompletedTasks,
+  getPendingTasks,
+  getTodayTasks,
+  getOverdueTasks,
+  getThisWeeksTasks,
+  getHighPriorityTasks,
+  loadFromIndexDB,
+  initializeDB,
+  deleteTask,
+  deleteProject,
+  editTask,
+  editProject,
+  addTaskToProject,
+  searchTasks,
+  changeTaskSort,
+};d,
   getCompletedTasks,
   getPendingTasks,
   getTodayTasks,
