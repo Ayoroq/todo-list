@@ -1,5 +1,5 @@
 import { taskList, projectList, searchTasks } from "./module.js";
-import sortImage from "/assets/sort.svg";
+import sortImage from "/assets/sort.png";
 
 // DOM elements
 const mainContainer = document.querySelector(".main");
