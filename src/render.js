@@ -24,8 +24,8 @@ function createSortDropdown() {
   const sortOptions = [
     { text: "Due Date Ascending", value: "due-date" },
     { text: "Due Date Descending", value: "due-date-desc" },
-    { text: "Priority Ascending", value: "priority-asc" },
-    { text: "Priority Descending", value: "priority-desc" },
+    { text: "Low to High Priority", value: "priority-asc" },
+    { text: "High to Low Priority", value: "priority-desc" },
   ];
 
   sortOptions.forEach((option) => {

@@ -327,23 +327,20 @@ function initializeEventListeners() {
 
   // handles the sort dropdown
   document.addEventListener("click", (event) => {
+    const dropdownContent = document.querySelector(".sort-dropdown-content");
     if (event.target.matches(".dropdown-toggle, .dropdown-toggle img")) {
-      const dropdownContent = document.querySelector(".sort-dropdown-content");
       dropdownContent.classList.toggle("hidden");
-    }
-
-    if (event.target.matches(".sort-option")) {
+    } else if (event.target.matches(".sort-option")) {
       const sortType = event.target.getAttribute("data-sort");
       if (sortType) {
         changeTaskSort(sortType);
-        const dropdownContent = document.querySelector(".sort-dropdown-content");
         if (dropdownContent) {
-          dropdownContent.classList.toggle("hidden");
+          dropdownContent.classList.add("hidden");
         }
-        // Re-render tasks after sorting but we need to check if the active button is a task filter or project button
-        renderActiveView()
+        renderActiveView();
       }
-    
+    } else if (dropdownContent && !dropdownContent.classList.contains("hidden") && !event.target.closest(".sort-dropdown")) {
+      dropdownContent.classList.add("hidden");
     }
   })
 }
