@@ -282,7 +282,11 @@ function initializeEventListeners() {
         )
       ) {
         deleteProject(project).then(() => {
-          renderProjects();
+          renderAll();
+          const allButton = document.querySelector("[data-filter='all']");
+        if (allButton) {
+          allButton.classList.add("active");
+        }
         });
       }
     }

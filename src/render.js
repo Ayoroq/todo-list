@@ -20,7 +20,6 @@ function createSortDropdown() {
   dropdownContent.className = "sort-dropdown-content";
   dropdownContent.classList.add("hidden");
 
-
   const sortOptions = [
     { text: "Due Date Ascending", value: "due-date" },
     { text: "Due Date Descending", value: "due-date-desc" },
@@ -179,9 +178,19 @@ function renderProjectTasks(project) {
   // Clear existing content
   mainContainer.textContent = "";
   header.textContent = "";
+  const container = document.createElement("div");
+  container.className = "project-tasks-container";
+  header.appendChild(container);
+
+  // Render project name and description
   const projectName = document.createElement("h2");
+  const projectDescription = document.createElement("p");
+  projectName.className = "project-name";
+  projectDescription.className = "project-description";
   projectName.textContent = project.projectName;
-  header.appendChild(projectName);
+  projectDescription.textContent = project.projectDescription || "No description available.";
+  container.appendChild(projectName);
+  container.appendChild(projectDescription);
   header.appendChild(createSortDropdown());
 
   // Render each task
